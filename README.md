@@ -62,7 +62,8 @@ batch can be undone.
 - Confidence-gated organization
 - Batch undo and collision-safe moves
 - Exact duplicate detection with SHA-256 and recoverable Trash cleanup
-- Strict top-level-only scope: folders and every file inside them are never scanned or moved
+- Top-level-only organization: downloaded folders and their contents are never moved
+- Read-only recursive duplicate scanning, with explicit confirmation before Trash
 - Color-coded Finder icons distinguish FileMorrow-managed category folders from ordinary folders
 - Menu-bar companion for status, rescanning, duplicate checks, and reopening the app
 - Native SwiftUI interface and Settings window
@@ -155,16 +156,23 @@ files remain for review. Both automatic organization and Launch at Login can be
 disabled in Settings.
 
 <p align="center">
-  <img src="docs/images/finder-folders.png" width="300" alt="Color-coded FileMorrow category folders in Finder">
+  <img src="docs/images/menu-bar.png" width="300" alt="FileMorrow menu-bar companion showing automatic organization controls">
 </p>
 
 Choose **Show Welcome Guide** from the FileMorrow app menu, menu-bar companion,
 or Settings to reopen onboarding at any time.
 
+## Managed folders
+
 **All Downloads** also presents files directly inside FileMorrow-managed
 category folders as a read-only library. Managed folders carry a hidden marker;
-arbitrary user/downloaded folders are never entered. Organized files are labeled
-and excluded from the seven-day queue so they cannot be moved twice.
+arbitrary user/downloaded folders are not displayed or organized. Only the
+explicit duplicate scan reads them to compare hashes. Organized files are
+labeled and excluded from the seven-day queue so they cannot be moved twice.
+
+<p align="center">
+  <img src="docs/images/finder-folders.png" width="300" alt="Color-coded FileMorrow category folders in Finder">
+</p>
 
 ## Privacy architecture
 
@@ -182,7 +190,7 @@ flowchart LR
     Q -- "Approved" --> O["Top-level managed folder"]
     Q -- "Uncertain" --> V["Visible review queue"]
     O --> U["Undo history"]
-    D --> H["SHA-256 duplicate scan"]
+    X["All accessible files under Downloads<br>read-only"] --> H["SHA-256 duplicate scan"]
     H --> T["User-selected extras to Trash"]
 ```
 
@@ -197,15 +205,11 @@ Before any automatic organization or Launch at Login registration, onboarding
 explains:
 
 1. Files stay loose for seven days.
-2. Folders and everything inside them are outside FileMorrow's boundary.
+2. The organizer never moves downloaded folders or anything inside them.
 3. Format mode is the predictable default; Smart Content is optional.
 4. Organized batches can be undone.
 5. Duplicate cleanup uses exact SHA-256 matching and recoverable Trash.
 6. Smart Content availability depends on the Mac and Apple Intelligence setup.
-
-<p align="center">
-  <img src="docs/images/menu-bar.png" width="300" alt="FileMorrow menu-bar companion showing automatic organization controls">
-</p>
 
 ## Project structure
 
