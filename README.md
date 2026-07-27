@@ -67,24 +67,23 @@ Create local ZIP and DMG release artifacts with SHA-256 checksums:
 ./Scripts/create-release.sh
 ```
 
-Local packages are ad-hoc signed unless `FILEMORROW_SIGN_IDENTITY` names an
-installed Developer ID Application certificate. Tagged GitHub releases use
-Hardened Runtime, Apple notarization, ticket stapling, Gatekeeper assessment,
-and checksum generation.
+GitHub release packages are ad-hoc signed and include SHA-256 checksums. They
+are not notarized because this independent open-source project does not
+currently have an Apple Developer membership.
 
-## Release credentials
+## Install a GitHub release
 
-The release workflow expects these GitHub Actions secrets:
+1. Download the DMG or ZIP and `SHA256SUMS.txt` from the same release.
+2. Verify the checksum with `shasum -a 256 -c SHA256SUMS.txt`.
+3. Move FileMorrow to Applications and try to open it once.
+4. If macOS blocks it, open **System Settings → Privacy & Security**, scroll to
+   **Security**, and choose **Open Anyway**, then authenticate and confirm.
 
-- `DEVELOPER_ID_APPLICATION_P12_BASE64`
-- `DEVELOPER_ID_APPLICATION_P12_PASSWORD`
-- `DEVELOPER_ID_APPLICATION_IDENTITY`
-- `BUILD_KEYCHAIN_PASSWORD`
-- `APPLE_ID`
-- `APPLE_TEAM_ID`
-- `APPLE_APP_PASSWORD`
-
-Never commit certificates, Apple passwords, or notarization credentials.
+Only override Gatekeeper when the download came from the official FileMorrow
+GitHub repository and its SHA-256 checksum matches. Apple notes that software
+from an unidentified developer has not been reviewed by Apple, so users should
+make this exception only for software they trust. See
+[Apple’s Open Anyway instructions](https://support.apple.com/guide/mac-help/mh40616/mac).
 
 ## Safety model
 

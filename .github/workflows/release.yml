@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  notarized-release:
+  open-source-release:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v5
@@ -22,47 +22,14 @@ jobs:
       - name: Test
         run: swift test
 
-      - name: Import Developer ID certificate
-        env:
-          CERTIFICATE_BASE64: ${{ secrets.DEVELOPER_ID_APPLICATION_P12_BASE64 }}
-          CERTIFICATE_PASSWORD: ${{ secrets.DEVELOPER_ID_APPLICATION_P12_PASSWORD }}
-          KEYCHAIN_PASSWORD: ${{ secrets.BUILD_KEYCHAIN_PASSWORD }}
-        run: |
-          certificate="$RUNNER_TEMP/developer-id.p12"
-          keychain="$RUNNER_TEMP/filemorrow.keychain-db"
-          echo "$CERTIFICATE_BASE64" | base64 --decode > "$certificate"
-          security create-keychain -p "$KEYCHAIN_PASSWORD" "$keychain"
-          security set-keychain-settings -lut 21600 "$keychain"
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$keychain"
-          security import "$certificate" -P "$CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$keychain"
-          security list-keychains -d user -s "$keychain"
-          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$keychain"
-
-      - name: Build with Hardened Runtime
-        env:
-          FILEMORROW_SIGN_IDENTITY: ${{ secrets.DEVELOPER_ID_APPLICATION_IDENTITY }}
-        run: ./Scripts/package-app.sh
-
-      - name: Submit to Apple notarization service
-        env:
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
-        run: |
-          ditto -c -k --keepParent "dist/FileMorrow.app" "$RUNNER_TEMP/FileMorrow-notary.zip"
-          xcrun notarytool submit "$RUNNER_TEMP/FileMorrow-notary.zip" \
-            --apple-id "$APPLE_ID" \
-            --team-id "$APPLE_TEAM_ID" \
-            --password "$APPLE_APP_PASSWORD" \
-            --wait
-          xcrun stapler staple "dist/FileMorrow.app"
-          xcrun stapler validate "dist/FileMorrow.app"
-          spctl --assess --type execute --verbose=4 "dist/FileMorrow.app"
-
-      - name: Create release artifacts
-        env:
-          SKIP_PACKAGE: "1"
+      - name: Create ad-hoc-signed release artifacts
         run: ./Scripts/create-release.sh
+
+      - name: Verify artifacts and checksums
+        run: |
+          codesign --verify --deep --strict "dist/FileMorrow.app"
+          cd dist/release
+          shasum -a 256 -c SHA256SUMS.txt
 
       - name: Publish GitHub release
         env:
@@ -71,5 +38,5 @@ jobs:
           gh release create "$GITHUB_REF_NAME" \
             dist/release/* \
             --title "FileMorrow $GITHUB_REF_NAME" \
-            --generate-notes \
+            --notes-file CHANGELOG.md \
             --verify-tag

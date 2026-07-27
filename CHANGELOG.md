@@ -4,6 +4,9 @@ All notable FileMorrow changes are documented here.
 
 ## 1.4 — 2026-07-27
 
+The downloadable build is ad-hoc signed and not notarized. Verify its SHA-256
+checksum before using Privacy & Security → Open Anyway.
+
 - Renamed the app to FileMorrow and added “Made by Nabeegh” to About.
 - Added a redesigned app icon and color-coded Finder icons for managed folders.
 - Added automatic hourly organization for eligible files older than seven days.
