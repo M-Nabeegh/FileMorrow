@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import DownloadsButler
+@testable import FileMorrow
 
 final class OrganizerServiceTests: XCTestCase {
     func testMarkerCollisionAndUndoAreSafe() async throws {
@@ -25,7 +25,7 @@ final class OrganizerServiceTests: XCTestCase {
         )
 
         XCTAssertEqual(moved, 1)
-        XCTAssertTrue(FileManager.default.fileExists(atPath: images.appending(path: ".downloads-butler-managed").path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: images.appending(path: ".filemorrow-managed").path))
         XCTAssertTrue(FileManager.default.fileExists(atPath: images.appending(path: "photo 2.jpg").path))
         XCTAssertEqual(try Data(contentsOf: images.appending(path: "photo.jpg")), Data("existing".utf8))
 

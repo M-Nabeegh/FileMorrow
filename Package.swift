@@ -2,17 +2,17 @@
 import PackageDescription
 
 let package = Package(
-    name: "DownloadsButler",
+    name: "FileMorrow",
     platforms: [.macOS(.v26)],
     targets: [
         .executableTarget(
-            name: "DownloadsButler",
-            path: "Sources/DownloadsButler"
+            name: "FileMorrow",
+            path: "Sources/FileMorrow"
         ),
         .testTarget(
-            name: "DownloadsButlerTests",
-            dependencies: ["DownloadsButler"],
-            path: "Tests/DownloadsButlerTests"
+            name: "FileMorrowTests",
+            dependencies: ["FileMorrow"],
+            path: "Tests/FileMorrowTests"
         )
     ]
 )

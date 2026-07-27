@@ -20,7 +20,7 @@ mkdir -p "$profile_dir/Downloads" "$profile_dir/Library/Preferences"
 
 HOME="$profile_dir" \
 CFFIXED_USER_HOME="$profile_dir" \
-"$project_dir/dist/FileMorrow.app/Contents/MacOS/DownloadsButler" \
+"$project_dir/dist/FileMorrow.app/Contents/MacOS/FileMorrow" \
   >"$log_file" 2>&1 &
 app_pid=$!
 

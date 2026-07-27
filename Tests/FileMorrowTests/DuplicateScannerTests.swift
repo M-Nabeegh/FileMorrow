@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import DownloadsButler
+@testable import FileMorrow
 
 final class DuplicateScannerTests: XCTestCase {
     func testFindsOnlyByteIdenticalFiles() async throws {

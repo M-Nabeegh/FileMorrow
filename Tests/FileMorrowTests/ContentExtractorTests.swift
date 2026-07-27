@@ -1,6 +1,6 @@
 import XCTest
 import UniformTypeIdentifiers
-@testable import DownloadsButler
+@testable import FileMorrow
 
 final class ContentExtractorTests: XCTestCase {
     func testPlainTextEvidenceIncludesFilenameAndContents() async throws {

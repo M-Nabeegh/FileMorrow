@@ -714,6 +714,15 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                 }
 
+                Section("App") {
+                    Toggle("Keep FileMorrow in the Dock", isOn: Binding(
+                        get: { state.keepInDock },
+                        set: { state.setKeepInDock($0) }
+                    ))
+                    Text("Turn this off for a menu-bar-only experience. FileMorrow keeps running after its windows close.")
+                        .foregroundStyle(.secondary)
+                }
+
                 Section("Help") {
                     Button("Show Welcome Guide") {
                         state.requestOnboarding()
@@ -856,7 +865,7 @@ private struct CategorySettingsView: View {
     private func exportProfile() {
         let panel = NSSavePanel()
         panel.allowedContentTypes = [.json]
-        panel.nameFieldStringValue = "downloads-butler-profile.json"
+        panel.nameFieldStringValue = "filemorrow-profile.json"
         guard panel.runModal() == .OK, let url = panel.url else { return }
         Task { await state.exportProfile(to: url) }
     }

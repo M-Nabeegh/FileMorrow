@@ -10,8 +10,7 @@ actor FileScanner {
     private let recoveryFlagURL: URL
 
     init() {
-        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appending(path: "DownloadsButler", directoryHint: .isDirectory)
+        let base = AppSupportPaths.directory()
         try? FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
         ageURL = base.appending(path: "file-ages.json")
         recoveryFlagURL = base.appending(path: "recover-ages-from-modification")
@@ -36,8 +35,7 @@ actor FileScanner {
         var candidates = looseURLs.map { ($0, FileLocation.loose) }
         for definition in profile.enabledCategories where definition.category != .needsReview {
             let folder = downloadsURL.appending(path: definition.folderName, directoryHint: .isDirectory)
-            let marker = folder.appending(path: ".downloads-butler-managed")
-            guard FileManager.default.fileExists(atPath: marker.path),
+            guard AppSupportPaths.hasManagedMarker(in: folder),
                   let organizedURLs = try? FileManager.default.contentsOfDirectory(
                       at: folder,
                       includingPropertiesForKeys: Array(keys),

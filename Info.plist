@@ -7,7 +7,7 @@
     <key>CFBundleDisplayName</key>
     <string>FileMorrow</string>
     <key>CFBundleExecutable</key>
-    <string>DownloadsButler</string>
+    <string>FileMorrow</string>
     <key>CFBundleIdentifier</key>
     <string>com.nabeegh.filemorrow</string>
     <key>CFBundleIconFile</key>

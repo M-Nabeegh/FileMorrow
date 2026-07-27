@@ -7,8 +7,7 @@ actor PersistenceStore {
     private let movesURL: URL
 
     init(baseURL: URL? = nil) {
-        let base = baseURL ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appending(path: "DownloadsButler", directoryHint: .isDirectory)
+        let base = baseURL ?? AppSupportPaths.directory()
         try? FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
         decisionsURL = base.appending(path: "decisions.json")
         movesURL = base.appending(path: "move-history.json")

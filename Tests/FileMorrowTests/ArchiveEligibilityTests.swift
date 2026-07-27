@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import DownloadsButler
+@testable import FileMorrow
 
 final class ArchiveEligibilityTests: XCTestCase {
     func testLooseFileBecomesEligibleOnlyAfterSevenDays() {

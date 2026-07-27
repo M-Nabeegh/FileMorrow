@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import Observation
 import ServiceManagement
@@ -22,6 +23,7 @@ final class AppState {
     ) ?? .formatOnly
     var automaticOrganization = UserDefaults.standard.object(forKey: "automaticOrganization") as? Bool ?? true
     var launchAtLogin = UserDefaults.standard.object(forKey: "launchAtLogin") as? Bool ?? true
+    var keepInDock = UserDefaults.standard.object(forKey: "keepInDock") as? Bool ?? true
     var duplicateGroups: [DuplicateGroup] = []
     var isScanningDuplicates = false
     var onboardingRequestID: UUID?
@@ -172,6 +174,22 @@ final class AppState {
             UserDefaults.standard.set(launchAtLogin, forKey: "launchAtLogin")
             lastError = error.localizedDescription
             status = "Could not change Launch at Login"
+        }
+    }
+
+    func setKeepInDock(_ enabled: Bool) {
+        guard DockVisibility.apply(keepInDock: enabled) else {
+            lastError = "macOS could not change the Dock visibility."
+            status = "Could not change Dock visibility"
+            return
+        }
+        keepInDock = enabled
+        UserDefaults.standard.set(enabled, forKey: "keepInDock")
+        status = enabled
+            ? "FileMorrow will stay in the Dock"
+            : "FileMorrow is running from the menu bar"
+        if enabled {
+            NSApplication.shared.activate()
         }
     }
 

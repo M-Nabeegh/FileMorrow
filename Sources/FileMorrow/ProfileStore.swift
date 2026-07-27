@@ -6,8 +6,7 @@ actor ProfileStore {
     private let profileURL: URL
 
     init() {
-        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appending(path: "DownloadsButler", directoryHint: .isDirectory)
+        let base = AppSupportPaths.directory()
         try? FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
         profileURL = base.appending(path: "organization-profile.json")
         encoder = JSONEncoder()

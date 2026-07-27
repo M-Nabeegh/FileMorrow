@@ -5,10 +5,12 @@ All notable FileMorrow changes are documented here.
 ## 1.6 — 2026-07-27
 
 - Keep the menu-bar companion alive when the main window closes.
+- Add a Keep FileMorrow in the Dock setting for menu-bar-only use.
 - Add Show Welcome Guide commands in the app menu, menu bar, and Settings.
 - Scan all accessible folders inside Downloads for exact SHA-256 duplicates.
 - Keep organization top-level-only and duplicate cleanup explicit and recoverable.
 - Add polished Finder-folder and menu-bar screenshots.
+- Rename the Swift package, executable, source folder, and test folder to FileMorrow.
 
 ## 1.5.1 — 2026-07-27
 
@@ -25,8 +27,8 @@ All notable FileMorrow changes are documented here.
   ineligible-device, model-not-ready, available, and unknown states.
 - Added a privacy-safe synthetic accuracy suite with generated PDF, PPTX, XLSX,
   and ambiguous-file fixtures.
-- Added public screenshots, a short demo, mode comparison, privacy architecture,
-  clean-machine checklist, and visible GitHub release-download counts.
+- Added public screenshots, mode comparison, privacy architecture, and a
+  clean-machine checklist.
 - Added a concrete private security-reporting channel.
 
 ## 1.4 — 2026-07-27

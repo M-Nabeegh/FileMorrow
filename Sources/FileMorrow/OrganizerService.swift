@@ -22,7 +22,7 @@ actor OrganizerService {
                     ?? record.category.rawValue
                 let folder = downloadsURL.appending(path: folderName, directoryHint: .isDirectory)
                 try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-                let marker = folder.appending(path: ".downloads-butler-managed")
+                let marker = folder.appending(path: AppSupportPaths.managedMarkerName)
                 if !FileManager.default.fileExists(atPath: marker.path) {
                     try Data("Managed by FileMorrow\n".utf8).write(to: marker, options: .atomic)
                 }
