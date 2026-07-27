@@ -14,7 +14,9 @@ struct AIClassification {
 }
 
 actor AIClassifier {
-    var availability: String { String(describing: SystemLanguageModel.default.availability) }
+    var availability: IntelligenceAvailabilityState {
+        IntelligenceAvailabilityState(SystemLanguageModel.default.availability)
+    }
 
     func classify(
         filename: String,

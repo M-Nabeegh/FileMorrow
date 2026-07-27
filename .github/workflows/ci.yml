@@ -28,3 +28,6 @@ jobs:
           ./Scripts/package-app.sh
           codesign --verify --deep --strict "dist/FileMorrow.app"
           codesign -dv --verbose=2 "dist/FileMorrow.app"
+
+      - name: Clean-profile launch smoke test
+        run: ./Scripts/clean-profile-smoke-test.sh

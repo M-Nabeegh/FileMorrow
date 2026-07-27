@@ -5,6 +5,8 @@ import UniformTypeIdentifiers
 struct RootView: View {
     @State var state: AppState
     @State private var showOrganizeConfirmation = false
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @State private var showOnboarding = false
 
     var body: some View {
         NavigationSplitView {
@@ -76,7 +78,23 @@ struct RootView: View {
         } message: {
             Text("Only files older than the archive window and above your confidence threshold will move into category folders directly inside Downloads. You can undo the batch.")
         }
-        .task { await state.scan() }
+        .sheet(isPresented: $showOnboarding) {
+            OnboardingView(availability: state.intelligenceAvailability) { mode, automatic, launchAtLogin in
+                Task {
+                    await state.completeOnboarding(
+                        mode: mode,
+                        automaticOrganization: automatic,
+                        launchAtLogin: launchAtLogin
+                    )
+                    hasCompletedOnboarding = true
+                    showOnboarding = false
+                }
+            }
+        }
+        .task {
+            await state.scan()
+            showOnboarding = !hasCompletedOnboarding
+        }
     }
 }
 

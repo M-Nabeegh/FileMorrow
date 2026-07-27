@@ -1,13 +1,42 @@
 # FileMorrow
 
-A private, content-aware Downloads organizer for macOS, made by Nabeegh and
-powered by the Apple
-Foundation Models framework.
+<p align="center">
+  <img src="Assets/FileMorrowIcon.png" width="128" alt="FileMorrow app icon">
+</p>
+
+<p align="center">
+  A calm, private Downloads organizer for macOS, made by Nabeegh.
+</p>
+
+<p align="center">
+  <a href="https://github.com/M-Nabeegh/FileMorrow/actions/workflows/ci.yml"><img src="https://github.com/M-Nabeegh/FileMorrow/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/M-Nabeegh/FileMorrow/releases/latest"><img src="https://img.shields.io/github/v/release/M-Nabeegh/FileMorrow" alt="Latest release"></a>
+  <a href="https://github.com/M-Nabeegh/FileMorrow/releases"><img src="https://img.shields.io/github/downloads/M-Nabeegh/FileMorrow/total" alt="Total release downloads"></a>
+  <img src="https://img.shields.io/badge/privacy-local--first-5b5bd6" alt="Local-first privacy">
+</p>
 
 FileMorrow keeps fresh files in **Today**, **Yesterday**, and **Last 7
-Days** views. Older files enter a review queue where deterministic rules and
-Apple Intelligence suggest meaningful folders. Nothing moves until the user
-chooses **Organize**, and every batch can be undone.
+Days** views. Only older loose files become eligible for category folders.
+Downloaded folders are never entered, and every organization batch can be
+undone.
+
+<p align="center">
+  <img src="docs/images/demo.gif" width="900" alt="FileMorrow onboarding and Downloads library demo">
+</p>
+
+| | Format mode | Smart Content mode |
+|---|---|---|
+| Default | **Yes** | Opt-in |
+| Classification | Known extension and system file type | Filename, local extracted evidence, then Apple Foundation Models when needed |
+| Apple Intelligence required | No | Yes, for unresolved content |
+| Predictability | Highest | More meaningful subject folders, but suggestions can be wrong |
+| Privacy | Local | Local, using Apple's on-device model |
+| Best for | Automatic low-maintenance cleanup | Mixed-subject University, Finance, Medical, Legal, and Work documents |
+
+> **Format mode is the recommended default.** Smart Content is useful when
+> subject matters more than extension, but the model is not perfectly accurate.
+> FileMorrow therefore uses deterministic evidence first and leaves uncertain
+> items visible for review.
 
 ## Highlights
 
@@ -37,14 +66,15 @@ chooses **Organize**, and every batch can be undone.
 ## Requirements
 
 - macOS 26 or later
-- Apple silicon Mac supported by Apple Intelligence
-- Apple Intelligence enabled and its model downloaded
+- Apple silicon Mac supported by Apple Intelligence for Smart Content
+- Apple Intelligence enabled and its model ready for Smart Content
 - Xcode 26 or later to build from source
 
 The app checks Foundation Models availability on launch under **Settings →
 Compatibility**. If Apple Intelligence is unavailable, deterministic rules,
 file previews, and manual teaching continue to work; only model analysis is
-disabled with an explanation.
+disabled with an explanation. Apple documents the runtime availability states
+in [`SystemLanguageModel.Availability`](https://developer.apple.com/documentation/foundationmodels/systemlanguagemodel/availability-swift.enum).
 
 ## Build
 
@@ -122,6 +152,51 @@ category folders as a read-only library. Managed folders carry a hidden marker;
 arbitrary user/downloaded folders are never entered. Organized files are labeled
 and excluded from the seven-day queue so they cannot be moved twice.
 
+## Privacy architecture
+
+```mermaid
+flowchart LR
+    D["Loose files in ~/Downloads"] --> A{"Older than 7 days?"}
+    A -- "No" --> F["Fresh views; no move"]
+    A -- "Yes" --> R["Format and filename rules"]
+    R --> C{"Smart Content enabled<br>and evidence unresolved?"}
+    C -- "No" --> Q["Confidence gate"]
+    C -- "Yes" --> E["Bounded local extraction<br>PDF, Office, text, Vision OCR"]
+    E --> L["Local evidence classifier"]
+    L --> M["Apple on-device<br>Foundation Model if needed"]
+    M --> Q
+    Q -- "Approved" --> O["Top-level managed folder"]
+    Q -- "Uncertain" --> V["Visible review queue"]
+    O --> U["Undo history"]
+    D --> H["SHA-256 duplicate scan"]
+    H --> T["User-selected extras to Trash"]
+```
+
+There is no server in this path. FileMorrow has no account, analytics SDK,
+advertising, cloud API key, or file upload code. Extracted evidence is bounded
+and used locally. Network access is needed only when a user downloads the app or
+when macOS itself prepares Apple Intelligence.
+
+## First launch
+
+Before any automatic organization or Launch at Login registration, onboarding
+explains:
+
+1. Files stay loose for seven days.
+2. Folders and everything inside them are outside FileMorrow's boundary.
+3. Format mode is the predictable default; Smart Content is optional.
+4. Organized batches can be undone.
+5. Duplicate cleanup uses exact SHA-256 matching and recoverable Trash.
+6. Smart Content availability depends on the Mac and Apple Intelligence setup.
+
+<p align="center">
+  <img src="docs/images/onboarding.png" width="760" alt="FileMorrow first-launch onboarding">
+</p>
+
+<p align="center">
+  <img src="docs/images/library.png" width="900" alt="FileMorrow library dashboard">
+</p>
+
 ## Project structure
 
 - `AppState.swift` — application state and workflows
@@ -153,6 +228,35 @@ many different subjects.
 
 File contents stay on the Mac. The project does not include telemetry,
 networking, advertising, or third-party analytics.
+
+## Accuracy and compatibility testing
+
+`SyntheticAccuracyTests` generates privacy-safe fake PDFs, presentations, and
+spreadsheets at test time. It verifies local extraction and subject
+classification without committing personal documents. Ambiguous filenames and
+content must remain uncertain. Compatibility copy is covered for available,
+Apple Intelligence disabled, ineligible-device, model-not-ready, checking, and
+unknown states.
+
+The packaged-app clean-profile preflight uses a temporary home and empty
+settings:
+
+```bash
+./Scripts/clean-profile-smoke-test.sh
+```
+
+See [`docs/CLEAN_MACHINE_TEST.md`](docs/CLEAN_MACHINE_TEST.md) for the required
+second-Mac matrix. A local simulated profile does not replace physical testing
+with Apple Intelligence both enabled and disabled.
+
+## Release download count
+
+The badge at the top shows total GitHub release-asset downloads without adding
+telemetry to the app. Maintainers can also print the current count:
+
+```bash
+./Scripts/release-downloads.sh
+```
 
 ## License
 

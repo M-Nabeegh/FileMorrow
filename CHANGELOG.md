@@ -2,6 +2,20 @@
 
 All notable FileMorrow changes are documented here.
 
+## 1.5 — 2026-07-27
+
+- Added consent-first onboarding for the seven-day rule, folder boundary,
+  Format mode, Smart Content, Undo, duplicates, and Apple Intelligence status.
+- Prevented automatic organization and Launch at Login registration before
+  onboarding is completed.
+- Added typed compatibility handling for Apple Intelligence disabled,
+  ineligible-device, model-not-ready, available, and unknown states.
+- Added a privacy-safe synthetic accuracy suite with generated PDF, PPTX, XLSX,
+  and ambiguous-file fixtures.
+- Added public screenshots, a short demo, mode comparison, privacy architecture,
+  clean-machine checklist, and visible GitHub release-download counts.
+- Added a concrete private security-reporting channel.
+
 ## 1.4 — 2026-07-27
 
 The downloadable build is ad-hoc signed and not notarized. Verify its SHA-256

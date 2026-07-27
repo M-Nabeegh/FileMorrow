@@ -16,7 +16,7 @@ final class AppState {
     var isWorking = false
     var lastError: String?
     var isAnalyzing = false
-    var intelligenceAvailability = "Checking…"
+    var intelligenceAvailability = IntelligenceAvailabilityState.checking
     var classificationMode = ClassificationMode(
         rawValue: UserDefaults.standard.string(forKey: "classificationMode") ?? ""
     ) ?? .formatOnly
@@ -86,23 +86,13 @@ final class AppState {
     }
     var duplicateExtraCount: Int { duplicateGroups.reduce(0) { $0 + $1.extras.count } }
     var duplicateWastedSize: Int64 { duplicateGroups.reduce(0) { $0 + $1.wastedSize } }
-    var intelligenceReady: Bool { intelligenceAvailability == "available" }
-    var intelligenceStatusTitle: String {
-        intelligenceReady ? "Apple Intelligence ready" : "Apple Intelligence unavailable"
-    }
-    var intelligenceStatusDetail: String {
-        if intelligenceReady {
-            return "The on-device Foundation Model is available. File evidence stays on this Mac."
-        }
-        if intelligenceAvailability == "Checking…" {
-            return "Checking this Mac’s on-device model…"
-        }
-        return "Requires macOS 26, an eligible Apple silicon Mac, Apple Intelligence enabled, and its model downloaded. Rules and manual teaching still work without it. System status: \(intelligenceAvailability)"
-    }
+    var intelligenceReady: Bool { intelligenceAvailability.isReady }
+    var intelligenceStatusTitle: String { intelligenceAvailability.title }
+    var intelligenceStatusDetail: String { intelligenceAvailability.detail }
 
     init() {
         startAutomaticScheduler()
-        if launchAtLogin {
+        if UserDefaults.standard.bool(forKey: "hasCompletedOnboarding"), launchAtLogin {
             try? SMAppService.mainApp.register()
         }
     }
@@ -167,7 +157,10 @@ final class AppState {
     }
 
     func runAutomaticOrganization() async {
-        guard automaticOrganization, !isWorking else { return }
+        guard UserDefaults.standard.bool(forKey: "hasCompletedOnboarding"),
+              automaticOrganization,
+              !isWorking
+        else { return }
         await scan()
 
         if classificationMode == .smartContent, intelligenceReady, !awaitingAnalysisFiles.isEmpty {
@@ -184,6 +177,24 @@ final class AppState {
         let count = approvedReadyFiles.count
         await organizeApproved()
         status = "Automatically organized \(count) files older than \(archiveDays) days"
+    }
+
+    func completeOnboarding(
+        mode: ClassificationMode,
+        automaticOrganization enabled: Bool,
+        launchAtLogin launchEnabled: Bool
+    ) async {
+        UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+        automaticOrganization = enabled
+        UserDefaults.standard.set(enabled, forKey: "automaticOrganization")
+        await setClassificationMode(mode)
+        setLaunchAtLogin(launchEnabled)
+        status = enabled
+            ? "Setup complete • Automatic checks run hourly"
+            : "Setup complete • Automatic organization is off"
+        if enabled {
+            await runAutomaticOrganization()
+        }
     }
 
     func analyzeReady(limit: Int? = nil) async {
