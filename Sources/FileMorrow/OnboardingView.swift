@@ -39,7 +39,7 @@ struct OnboardingView: View {
 
             HStack {
                 VStack(alignment: .leading, spacing: 6) {
-                    Toggle("Check automatically after seven days", isOn: $automaticOrganization)
+                    Toggle("Organize automatically after seven days", isOn: $automaticOrganization)
                     Toggle("Launch FileMorrow at login", isOn: $launchAtLogin)
                 }
                 Spacer()
@@ -115,8 +115,9 @@ struct OnboardingView: View {
             icon: "arrow.uturn.backward.circle.fill",
             tint: .green
         ) {
-            Text("FileMorrow shows an organization plan and asks before the first move. Every organized batch has a visible Undo Last Organization action.")
+            Text("Manual organization shows a plan before moving. If you enable automatic organization here, FileMorrow can move eligible files during hourly checks without asking again.")
                 .fontWeight(.medium)
+            Text("Every organized batch has a visible Undo Last Organization action.")
             Text("Duplicate detection compares SHA-256 hashes, keeps one copy, and sends only selected extras to Trash so they remain recoverable.")
         }
     }

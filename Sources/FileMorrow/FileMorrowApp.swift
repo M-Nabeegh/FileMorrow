@@ -95,7 +95,7 @@ private struct FileMorrowMenu: View {
 
         Text(state.status)
         Text("\(state.files.count.formatted()) files • \(state.readyFiles.count.formatted()) ready")
-        Text(state.automaticOrganization ? "Automatic checks: On • approval required" : "Automatic checks: Off")
+        Text(state.automaticOrganization ? "Automatic organization: On" : "Automatic organization: Off")
 
         Divider()
 

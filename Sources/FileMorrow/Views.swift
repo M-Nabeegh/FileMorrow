@@ -776,7 +776,7 @@ struct SettingsView: View {
                 }
 
                 Section("Archive") {
-                    Toggle("Check hourly and ask before organizing", isOn: Binding(
+                    Toggle("Automatically organize eligible files hourly", isOn: Binding(
                         get: { state.automaticOrganization },
                         set: { state.setAutomaticOrganization($0) }
                     ))
