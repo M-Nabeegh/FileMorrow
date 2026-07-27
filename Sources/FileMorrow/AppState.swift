@@ -21,8 +21,8 @@ final class AppState {
     var classificationMode = ClassificationMode(
         rawValue: UserDefaults.standard.string(forKey: "classificationMode") ?? ""
     ) ?? .formatOnly
-    var automaticOrganization = UserDefaults.standard.object(forKey: "automaticOrganization") as? Bool ?? false
-    var launchAtLogin = UserDefaults.standard.object(forKey: "launchAtLogin") as? Bool ?? false
+    var automaticOrganization = UserDefaults.standard.object(forKey: "automaticOrganization") as? Bool ?? true
+    var launchAtLogin = UserDefaults.standard.object(forKey: "launchAtLogin") as? Bool ?? true
     var keepInDock = UserDefaults.standard.object(forKey: "keepInDock") as? Bool ?? true
     var duplicateGroups: [DuplicateGroup] = []
     var isScanningDuplicates = false
@@ -158,8 +158,8 @@ final class AppState {
         automaticOrganization = enabled
         UserDefaults.standard.set(enabled, forKey: "automaticOrganization")
         status = enabled
-            ? "Automatic checks are on • Approval is required before every move"
-            : "Automatic checks are off"
+            ? "Automatic organization is on • Checks hourly"
+            : "Automatic organization is off"
         if enabled {
             Task { await runAutomaticOrganization() }
         }
@@ -216,7 +216,9 @@ final class AppState {
             return
         }
 
-        prepareOrganizationProposal(automaticCheck: true)
+        let count = approvedReadyFiles.count
+        await organizeApproved()
+        status = "Automatically organized \(count) files • Undo Last Organization is available"
     }
 
     func checkAndPrepareOrganization() async {
@@ -239,10 +241,9 @@ final class AppState {
         await setClassificationMode(mode)
         setLaunchAtLogin(launchEnabled)
         status = enabled
-            ? "Setup complete • Hourly checks ask before moving files"
-            : "Setup complete • Automatic checks are off"
-        await scan()
-        if enabled { prepareOrganizationProposal(automaticCheck: true) }
+            ? "Setup complete • Automatic organization runs hourly"
+            : "Setup complete • Automatic organization is off"
+        if enabled { await runAutomaticOrganization() }
     }
 
     func analyzeReady(limit: Int? = nil) async {

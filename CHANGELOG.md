@@ -2,6 +2,14 @@
 
 All notable FileMorrow changes are documented here.
 
+## 1.7.1 — 2026-07-27
+
+- Default Automatic Organization and Launch at Login to on for new installs.
+- Treat the onboarding toggle as one-time consent for unattended hourly
+  organization; automatic checks no longer ask again.
+- Keep plan-first approval for manual organization and keep Undo Last
+  Organization visible after every automatic batch.
+
 ## 1.7 — 2026-07-27
 
 - Add a plan-first approval sheet showing file count, size, and destinations

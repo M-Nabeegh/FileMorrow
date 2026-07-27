@@ -19,9 +19,9 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-	<string>1.7</string>
+	<string>1.7.1</string>
     <key>CFBundleVersion</key>
-	<string>18</string>
+	<string>19</string>
     <key>NSHumanReadableCopyright</key>
     <string>Made by Nabeegh</string>
     <key>NSDownloadsFolderUsageDescription</key>

@@ -3,8 +3,8 @@
 <p align="center">
   <img src="Assets/FileMorrowIconTransparent.png" width="128" alt="FileMorrow app icon">
   <br><br>
-  <a href="https://github.com/M-Nabeegh/FileMorrow/releases/download/v1.7/FileMorrow-1.7-macOS.dmg">
-    <img src="https://img.shields.io/badge/Download_DMG-v1.7-6C63FF?style=for-the-badge&logo=apple&logoColor=white" alt="Download FileMorrow 1.7 DMG">
+  <a href="https://github.com/M-Nabeegh/FileMorrow/releases/download/v1.7.1/FileMorrow-1.7.1-macOS.dmg">
+    <img src="https://img.shields.io/badge/Download_DMG-v1.7.1-6C63FF?style=for-the-badge&logo=apple&logoColor=white" alt="Download FileMorrow 1.7.1 DMG">
   </a>
 </p>
 
@@ -150,12 +150,13 @@ it never removes anything without explicit confirmation.
 ## Menu bar
 
 The menu-bar companion remains available when the main window is closed. It can
-reopen the app, rescan Downloads, prepare an organization plan, check for
-duplicates, open Settings, or quit. Automatic checks and Launch at Login are
-opt-in. Hourly checks never move files silently: FileMorrow shows the eligible
-count, size, and destinations and waits for approval. Only loose files older
-than the configured age (seven days by default) are eligible, and uncertain
-files remain for review.
+reopen the app, rescan Downloads, prepare a manual organization plan, check for
+duplicates, open Settings, or quit. Automatic Organization and Launch at Login
+default to on for new installs and are clearly presented during onboarding.
+Leaving Automatic Organization enabled grants ongoing consent for hourly
+organization without repeated prompts. Only loose files older than the
+configured age (seven days by default) are eligible, uncertain files remain
+for review, and every completed batch can be undone.
 
 Turn off **Settings → Organization → Keep FileMorrow in the Dock** for a
 menu-bar-only experience. The app continues running after its windows close and
@@ -207,7 +208,7 @@ when macOS itself prepares Apple Intelligence.
 
 ## First launch
 
-Before any automatic check or Launch at Login registration, onboarding
+Before automatic organization or Launch at Login registration, onboarding
 explains:
 
 1. Files stay loose for seven days.
