@@ -4,9 +4,23 @@ struct OnboardingView: View {
     let availability: IntelligenceAvailabilityState
     let onComplete: (ClassificationMode, Bool, Bool) -> Void
 
-    @State private var mode = ClassificationMode.formatOnly
-    @State private var automaticOrganization = true
-    @State private var launchAtLogin = true
+    @State private var mode: ClassificationMode
+    @State private var automaticOrganization: Bool
+    @State private var launchAtLogin: Bool
+
+    init(
+        availability: IntelligenceAvailabilityState,
+        initialMode: ClassificationMode,
+        initialAutomaticOrganization: Bool,
+        initialLaunchAtLogin: Bool,
+        onComplete: @escaping (ClassificationMode, Bool, Bool) -> Void
+    ) {
+        self.availability = availability
+        self.onComplete = onComplete
+        _mode = State(initialValue: initialMode)
+        _automaticOrganization = State(initialValue: initialAutomaticOrganization)
+        _launchAtLogin = State(initialValue: initialLaunchAtLogin)
+    }
 
     var body: some View {
         VStack(spacing: 0) {

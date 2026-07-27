@@ -81,7 +81,12 @@ struct RootView: View {
             Text("Only files older than the archive window and above your confidence threshold will move into category folders directly inside Downloads. You can undo the batch.")
         }
         .sheet(isPresented: $showOnboarding) {
-            OnboardingView(availability: state.intelligenceAvailability) { mode, automatic, launchAtLogin in
+            OnboardingView(
+                availability: state.intelligenceAvailability,
+                initialMode: state.classificationMode,
+                initialAutomaticOrganization: state.automaticOrganization,
+                initialLaunchAtLogin: state.launchAtLogin
+            ) { mode, automatic, launchAtLogin in
                 Task {
                     await state.completeOnboarding(
                         mode: mode,
