@@ -3,17 +3,19 @@ import Foundation
 
 actor DuplicateScanner {
     func scan(root: URL) -> [DuplicateGroup] {
-        let keys: Set<URLResourceKey> = [.isRegularFileKey, .fileSizeKey]
-        guard let urls = try? FileManager.default.contentsOfDirectory(
+        let keys: Set<URLResourceKey> = [.isRegularFileKey, .isSymbolicLinkKey, .fileSizeKey]
+        guard let enumerator = FileManager.default.enumerator(
             at: root,
             includingPropertiesForKeys: Array(keys),
-            options: [.skipsHiddenFiles]
+            options: [.skipsHiddenFiles, .skipsPackageDescendants],
+            errorHandler: { _, _ in true }
         ) else { return [] }
 
         var bySize: [Int64: [URL]] = [:]
-        for url in urls {
+        for case let url as URL in enumerator {
             guard let values = try? url.resourceValues(forKeys: keys),
                   values.isRegularFile == true,
+                  values.isSymbolicLink != true,
                   let size = values.fileSize,
                   size > 0 else { continue }
             bySize[Int64(size), default: []].append(url)

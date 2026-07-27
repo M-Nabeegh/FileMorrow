@@ -21,19 +21,23 @@ final class DuplicateScannerTests: XCTestCase {
         XCTAssertEqual(groups[0].wastedSize, Int64(duplicate.count))
     }
 
-    func testNeverEntersDownloadedOrUserCreatedFolders() async throws {
+    func testFindsExactDuplicatesInsideDownloadedOrUserCreatedFolders() async throws {
         let root = FileManager.default.temporaryDirectory
             .appending(path: UUID().uuidString, directoryHint: .isDirectory)
-        let nested = root.appending(path: "Downloaded Project", directoryHint: .isDirectory)
-        try FileManager.default.createDirectory(at: nested, withIntermediateDirectories: true)
+        let firstFolder = root.appending(path: "Downloaded Project", directoryHint: .isDirectory)
+        let secondFolder = root.appending(path: "Personal Folder", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: firstFolder, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: secondFolder, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: root) }
 
         let duplicate = Data("nested duplicate".utf8)
-        try duplicate.write(to: nested.appending(path: "copy-a.txt"))
-        try duplicate.write(to: nested.appending(path: "copy-b.txt"))
+        try duplicate.write(to: firstFolder.appending(path: "copy-a.txt"))
+        try duplicate.write(to: secondFolder.appending(path: "copy-b.txt"))
 
         let groups = await DuplicateScanner().scan(root: root)
-        XCTAssertTrue(groups.isEmpty)
+        XCTAssertEqual(groups.count, 1)
+        XCTAssertEqual(groups[0].files.count, 2)
+        XCTAssertTrue(groups[0].files.allSatisfy { $0.deletingLastPathComponent() != root })
     }
 
     func testDuplicateCleanupKeepsOneAndUsesRecoverableDestination() async throws {

@@ -147,6 +147,13 @@ default) are moved. Deterministic format matches move automatically; uncertain
 files remain for review. Both automatic organization and Launch at Login can be
 disabled in Settings.
 
+<p align="center">
+  <img src="docs/images/finder-folders.png" width="420" alt="Color-coded FileMorrow category folders in Finder">
+</p>
+
+Choose **Show Welcome Guide** from the FileMorrow app menu, menu-bar companion,
+or Settings to reopen onboarding at any time.
+
 **All Downloads** also presents files directly inside FileMorrow-managed
 category folders as a read-only library. Managed folders carry a hidden marker;
 arbitrary user/downloaded folders are never entered. Organized files are labeled
@@ -228,6 +235,13 @@ many different subjects.
 
 File contents stay on the Mac. The project does not include telemetry,
 networking, advertising, or third-party analytics.
+
+Duplicate detection is the one workflow that recursively reads accessible
+folders inside Downloads. It hashes bytes locally and never reorganizes nested
+content. Nothing is removed automatically: users review each exact-match group,
+and confirmed extras go to recoverable macOS Trash. Identical nested project or
+app files may be intentional, so the full paths must be reviewed before cleanup.
+The organizer itself remains strictly limited to loose top-level files.
 
 ## Accuracy and compatibility testing
 

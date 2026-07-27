@@ -2,6 +2,14 @@
 
 All notable FileMorrow changes are documented here.
 
+## 1.6 — 2026-07-27
+
+- Keep the menu-bar companion alive when the main window closes.
+- Add Show Welcome Guide commands in the app menu, menu bar, and Settings.
+- Scan all accessible folders inside Downloads for exact SHA-256 duplicates.
+- Keep organization top-level-only and duplicate cleanup explicit and recoverable.
+- Add polished Finder-folder and menu-bar screenshots.
+
 ## 1.5.1 — 2026-07-27
 
 - Rescan automatically whenever FileMorrow becomes active after using Finder.

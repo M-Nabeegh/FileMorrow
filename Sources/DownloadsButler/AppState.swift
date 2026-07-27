@@ -24,6 +24,7 @@ final class AppState {
     var launchAtLogin = UserDefaults.standard.object(forKey: "launchAtLogin") as? Bool ?? true
     var duplicateGroups: [DuplicateGroup] = []
     var isScanningDuplicates = false
+    var onboardingRequestID: UUID?
     var profile = ProfileStore.fallback
     private var shouldCancelAnalysis = false
 
@@ -105,6 +106,10 @@ final class AppState {
         profile.definition(for: category)
             ?? profile.definition(for: .needsReview)
             ?? ProfileStore.fallback.categories.last!
+    }
+
+    func requestOnboarding() {
+        onboardingRequestID = UUID()
     }
 
     func scan() async {
@@ -311,7 +316,7 @@ final class AppState {
         isWorking = false
         status = duplicateGroups.isEmpty
             ? "No exact duplicates found"
-            : "Found \(duplicateExtraCount) removable duplicate copies"
+            : "Found \(duplicateExtraCount) potential duplicate copies to review"
     }
 
     func trashDuplicateExtras(in group: DuplicateGroup) async {
