@@ -9,7 +9,9 @@
 </p>
 
 <p align="center">
-  A calm, private Downloads organizer for macOS, made by Nabeegh.
+  <strong>Organize your Downloads with on-device Apple Intelligence—guided by your own rules.</strong>
+  <br>
+  Private, reversible, and made for macOS by Nabeegh.
 </p>
 
 <p align="center">
@@ -19,14 +21,14 @@
   <img src="https://img.shields.io/badge/privacy-local--first-5b5bd6" alt="Local-first privacy">
 </p>
 
+<p align="center">
+  <img src="docs/images/onboarding.png" width="900" alt="FileMorrow welcome guide with format and Smart Content modes">
+</p>
+
 FileMorrow keeps fresh files in **Today**, **Yesterday**, and **Last 7
 Days** views. Only older loose files become eligible for category folders.
-Downloaded folders are never entered, and every organization batch can be
-undone.
-
-<p align="center">
-  <img src="docs/images/demo.gif" width="900" alt="FileMorrow onboarding and Downloads library demo">
-</p>
+Downloaded folders are never moved or reorganized, and every organization
+batch can be undone.
 
 | | Format mode | Smart Content mode |
 |---|---|---|
@@ -201,11 +203,7 @@ explains:
 6. Smart Content availability depends on the Mac and Apple Intelligence setup.
 
 <p align="center">
-  <img src="docs/images/onboarding.png" width="760" alt="FileMorrow first-launch onboarding">
-</p>
-
-<p align="center">
-  <img src="docs/images/library.png" width="900" alt="FileMorrow library dashboard">
+  <img src="docs/images/menu-bar.png" width="420" alt="FileMorrow menu-bar companion showing automatic organization controls">
 </p>
 
 ## Project structure
