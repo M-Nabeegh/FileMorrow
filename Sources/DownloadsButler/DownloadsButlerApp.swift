@@ -1,8 +1,15 @@
 import AppKit
 import SwiftUI
 
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        false
+    }
+}
+
 @main
 struct DownloadsButlerApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @State private var state = AppState()
 
     var body: some Scene {
@@ -35,6 +42,10 @@ struct DownloadsButlerApp: App {
                     Task { await state.analyzeReady() }
                 }
                 .keyboardShortcut("a", modifiers: [.command, .shift])
+
+                Button("Show Welcome Guide") {
+                    state.requestOnboarding()
+                }
             }
         }
 
@@ -83,6 +94,12 @@ private struct DownloadsButlerMenu: View {
         .disabled(state.isWorking)
 
         Divider()
+
+        Button("Show Welcome Guide") {
+            openWindow(id: "main")
+            NSApplication.shared.activate()
+            state.requestOnboarding()
+        }
 
         SettingsLink {
             Text("Settings…")

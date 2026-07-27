@@ -81,7 +81,12 @@ struct RootView: View {
             Text("Only files older than the archive window and above your confidence threshold will move into category folders directly inside Downloads. You can undo the batch.")
         }
         .sheet(isPresented: $showOnboarding) {
-            OnboardingView(availability: state.intelligenceAvailability) { mode, automatic, launchAtLogin in
+            OnboardingView(
+                availability: state.intelligenceAvailability,
+                initialMode: state.classificationMode,
+                initialAutomaticOrganization: state.automaticOrganization,
+                initialLaunchAtLogin: state.launchAtLogin
+            ) { mode, automatic, launchAtLogin in
                 Task {
                     await state.completeOnboarding(
                         mode: mode,
@@ -101,6 +106,10 @@ struct RootView: View {
         .onChange(of: scenePhase) { _, newPhase in
             guard newPhase == .active, hasPerformedInitialScan else { return }
             Task { await state.refreshAfterActivation() }
+        }
+        .onChange(of: state.onboardingRequestID) { _, requestID in
+            guard requestID != nil else { return }
+            showOnboarding = true
         }
     }
 }
@@ -260,8 +269,14 @@ private struct DuplicateCenterView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Exact Duplicates").font(.title2.bold())
-                    Text("Only loose files directly in Downloads are checked. Folders and everything inside them are never touched. SHA-256 verifies identical bytes.")
+                    Text("Every accessible folder inside Downloads is checked read-only. SHA-256 verifies identical bytes; only copies you confirm move to recoverable Trash.")
                         .foregroundStyle(.secondary)
+                    Label(
+                        "Nested project and app files can be intentionally identical. Review every full path before using Trash.",
+                        systemImage: "exclamationmark.triangle.fill"
+                    )
+                    .font(.caption)
+                    .foregroundStyle(.orange)
                 }
                 Spacer()
                 Button(state.isScanningDuplicates ? "Scanning…" : "Find Duplicates") {
@@ -278,7 +293,7 @@ private struct DuplicateCenterView: View {
                 ContentUnavailableView(
                     "No duplicate scan results",
                     systemImage: "doc.on.doc",
-                    description: Text("Run a scan to find byte-for-byte duplicate loose files in Downloads.")
+                    description: Text("Run a scan to find byte-for-byte duplicates anywhere inside Downloads.")
                 )
             } else {
                 List(state.duplicateGroups) { group in
@@ -326,7 +341,7 @@ private struct DuplicateCenterView: View {
             }
             Button("Cancel", role: .cancel) { pendingGroup = nil }
         } message: { group in
-            Text("FileMorrow will keep \(group.keeper.lastPathComponent). Only SHA-256-identical extras move to recoverable macOS Trash.")
+            Text("FileMorrow will keep \(group.keeper.path). Verify every path: nested project and app files may intentionally be identical. Confirmed SHA-256-identical extras move to recoverable macOS Trash.")
         }
     }
 }
@@ -696,6 +711,14 @@ struct SettingsView: View {
                     Text("Checks hourly while the menu-bar helper is running. Only files older than the selected age are moved; uncertain files stay for review.")
                         .foregroundStyle(.secondary)
                     Text("Current confidence threshold: \(minimumConfidence)%")
+                        .foregroundStyle(.secondary)
+                }
+
+                Section("Help") {
+                    Button("Show Welcome Guide") {
+                        state.requestOnboarding()
+                    }
+                    Text("Reopen the first-launch explanation without changing your current settings.")
                         .foregroundStyle(.secondary)
                 }
             }

@@ -2,27 +2,32 @@
 
 <p align="center">
   <img src="Assets/FileMorrowIcon.png" width="128" alt="FileMorrow app icon">
+  <br><br>
+  <a href="https://github.com/M-Nabeegh/FileMorrow/releases/download/v1.5.1/FileMorrow-1.5.1-macOS.dmg">
+    <img src="https://img.shields.io/badge/Download_DMG-v1.5.1-6C63FF?style=for-the-badge&logo=apple&logoColor=white" alt="Download FileMorrow 1.5.1 DMG">
+  </a>
 </p>
 
 <p align="center">
-  A calm, private Downloads organizer for macOS, made by Nabeegh.
+  <strong>Organize your Downloads with on-device Apple Intelligence—guided by your own rules.</strong>
+  <br>
+  Private, reversible, and made for macOS by Nabeegh.
 </p>
 
 <p align="center">
   <a href="https://github.com/M-Nabeegh/FileMorrow/actions/workflows/ci.yml"><img src="https://github.com/M-Nabeegh/FileMorrow/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/M-Nabeegh/FileMorrow/releases/latest"><img src="https://img.shields.io/github/v/release/M-Nabeegh/FileMorrow" alt="Latest release"></a>
-  <a href="https://github.com/M-Nabeegh/FileMorrow/releases"><img src="https://img.shields.io/github/downloads/M-Nabeegh/FileMorrow/total" alt="Total release downloads"></a>
   <img src="https://img.shields.io/badge/privacy-local--first-5b5bd6" alt="Local-first privacy">
+</p>
+
+<p align="center">
+  <img src="docs/images/onboarding.png" width="560" alt="FileMorrow welcome guide with format and Smart Content modes">
 </p>
 
 FileMorrow keeps fresh files in **Today**, **Yesterday**, and **Last 7
 Days** views. Only older loose files become eligible for category folders.
-Downloaded folders are never entered, and every organization batch can be
-undone.
-
-<p align="center">
-  <img src="docs/images/demo.gif" width="900" alt="FileMorrow onboarding and Downloads library demo">
-</p>
+Downloaded folders are never moved or reorganized, and every organization
+batch can be undone.
 
 | | Format mode | Smart Content mode |
 |---|---|---|
@@ -133,9 +138,11 @@ move for undo.
 FileMorrow persists each top-level file's first-seen date locally. Moving
 or undoing a file therefore does not reset the seven-day eligibility window.
 
-The organizer and duplicate finder operate only on loose regular files directly
-inside `~/Downloads`. Existing, newly created, and newly downloaded folders are
-always left in place, and the app never enters or modifies their contents.
+The organizer operates only on loose regular files directly inside
+`~/Downloads`. Existing, newly created, and newly downloaded folders are always
+left in place, and the organizer never moves or modifies their contents. The
+duplicate finder can read files recursively to compare exact SHA-256 hashes, but
+it never removes anything without explicit confirmation.
 
 ## Menu bar
 
@@ -146,6 +153,13 @@ checks hourly. Only loose files older than the configured age (seven days by
 default) are moved. Deterministic format matches move automatically; uncertain
 files remain for review. Both automatic organization and Launch at Login can be
 disabled in Settings.
+
+<p align="center">
+  <img src="docs/images/finder-folders.png" width="300" alt="Color-coded FileMorrow category folders in Finder">
+</p>
+
+Choose **Show Welcome Guide** from the FileMorrow app menu, menu-bar companion,
+or Settings to reopen onboarding at any time.
 
 **All Downloads** also presents files directly inside FileMorrow-managed
 category folders as a read-only library. Managed folders carry a hidden marker;
@@ -190,11 +204,7 @@ explains:
 6. Smart Content availability depends on the Mac and Apple Intelligence setup.
 
 <p align="center">
-  <img src="docs/images/onboarding.png" width="760" alt="FileMorrow first-launch onboarding">
-</p>
-
-<p align="center">
-  <img src="docs/images/library.png" width="900" alt="FileMorrow library dashboard">
+  <img src="docs/images/menu-bar.png" width="300" alt="FileMorrow menu-bar companion showing automatic organization controls">
 </p>
 
 ## Project structure
@@ -228,6 +238,13 @@ many different subjects.
 
 File contents stay on the Mac. The project does not include telemetry,
 networking, advertising, or third-party analytics.
+
+Duplicate detection is the one workflow that recursively reads accessible
+folders inside Downloads. It hashes bytes locally and never reorganizes nested
+content. Nothing is removed automatically: users review each exact-match group,
+and confirmed extras go to recoverable macOS Trash. Identical nested project or
+app files may be intentional, so the full paths must be reviewed before cleanup.
+The organizer itself remains strictly limited to loose top-level files.
 
 ## Accuracy and compatibility testing
 
