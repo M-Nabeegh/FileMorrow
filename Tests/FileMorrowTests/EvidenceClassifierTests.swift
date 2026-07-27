@@ -1,5 +1,5 @@
 import XCTest
-@testable import DownloadsButler
+@testable import FileMorrow
 
 final class EvidenceClassifierTests: XCTestCase {
     func testFinancialEvidenceIsClassifiedLocally() {

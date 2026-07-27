@@ -9,7 +9,7 @@ The shipped profile is
 On first launch, the app copies it to:
 
 ```text
-~/Library/Application Support/DownloadsButler/organization-profile.json
+~/Library/Application Support/FileMorrow/organization-profile.json
 ```
 
 Use **Settings → Categories** to enable, disable, add, edit, delete, import, or

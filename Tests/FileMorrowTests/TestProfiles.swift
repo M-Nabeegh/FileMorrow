@@ -1,5 +1,5 @@
 import Foundation
-@testable import DownloadsButler
+@testable import FileMorrow
 
 enum TestProfiles {
     static let general: OrganizationProfile = {

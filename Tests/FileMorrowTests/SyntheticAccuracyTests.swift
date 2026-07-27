@@ -2,7 +2,7 @@ import CoreGraphics
 import CoreText
 import XCTest
 import UniformTypeIdentifiers
-@testable import DownloadsButler
+@testable import FileMorrow
 
 final class SyntheticAccuracyTests: XCTestCase {
     func testPrivacySafeSyntheticOfficeSuite() async throws {

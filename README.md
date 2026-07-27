@@ -66,6 +66,7 @@ batch can be undone.
 - Read-only recursive duplicate scanning, with explicit confirmation before Trash
 - Color-coded Finder icons distinguish FileMorrow-managed category folders from ordinary folders
 - Menu-bar companion for status, rescanning, duplicate checks, and reopening the app
+- Optional menu-bar-only mode with a **Keep FileMorrow in the Dock** setting
 - Native SwiftUI interface and Settings window
 - No analytics, accounts, cloud API keys, or content uploads
 
@@ -154,6 +155,10 @@ checks hourly. Only loose files older than the configured age (seven days by
 default) are moved. Deterministic format matches move automatically; uncertain
 files remain for review. Both automatic organization and Launch at Login can be
 disabled in Settings.
+
+Turn off **Settings → Organization → Keep FileMorrow in the Dock** for a
+menu-bar-only experience. The app continues running after its windows close and
+can be reopened from the menu-bar companion.
 
 <p align="center">
   <img src="docs/images/menu-bar.png" width="300" alt="FileMorrow menu-bar companion showing automatic organization controls">

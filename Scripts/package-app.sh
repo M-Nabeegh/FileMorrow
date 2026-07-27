@@ -12,7 +12,7 @@ swift build -c release
 rm -rf "$app_dir"
 mkdir -p "$app_dir/Contents/MacOS"
 mkdir -p "$app_dir/Contents/Resources"
-cp "$build_dir/DownloadsButler" "$app_dir/Contents/MacOS/DownloadsButler"
+cp "$build_dir/FileMorrow" "$app_dir/Contents/MacOS/FileMorrow"
 cp "$project_dir/Info.plist" "$app_dir/Contents/Info.plist"
 cp "$project_dir/Assets/FileMorrow.icns" "$app_dir/Contents/Resources/FileMorrow.icns"
 cp "$project_dir/Configuration/default-profile.json" "$app_dir/Contents/Resources/default-profile.json"

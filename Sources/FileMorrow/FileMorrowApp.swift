@@ -1,14 +1,30 @@
 import AppKit
 import SwiftUI
 
+@MainActor
+enum DockVisibility {
+    static func policy(keepInDock: Bool) -> NSApplication.ActivationPolicy {
+        keepInDock ? .regular : .accessory
+    }
+
+    static func apply(keepInDock: Bool) -> Bool {
+        NSApplication.shared.setActivationPolicy(policy(keepInDock: keepInDock))
+    }
+}
+
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        let keepInDock = UserDefaults.standard.object(forKey: "keepInDock") as? Bool ?? true
+        _ = DockVisibility.apply(keepInDock: keepInDock)
+    }
+
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         false
     }
 }
 
 @main
-struct DownloadsButlerApp: App {
+struct FileMorrowApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @State private var state = AppState()
 
@@ -50,7 +66,7 @@ struct DownloadsButlerApp: App {
         }
 
         MenuBarExtra("FileMorrow", systemImage: "tray.full.fill") {
-            DownloadsButlerMenu(state: state)
+            FileMorrowMenu(state: state)
         }
         .menuBarExtraStyle(.menu)
 
@@ -60,7 +76,7 @@ struct DownloadsButlerApp: App {
     }
 }
 
-private struct DownloadsButlerMenu: View {
+private struct FileMorrowMenu: View {
     @Bindable var state: AppState
     @Environment(\.openWindow) private var openWindow
 
