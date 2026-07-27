@@ -1,0 +1,15 @@
+# Changelog
+
+All notable FileMorrow changes are documented here.
+
+## 1.4 — 2026-07-27
+
+- Renamed the app to FileMorrow and added “Made by Nabeegh” to About.
+- Added a redesigned app icon and color-coded Finder icons for managed folders.
+- Added automatic hourly organization for eligible files older than seven days.
+- Added Launch at Login and a menu-bar companion.
+- Added exact duplicate detection and recoverable cleanup.
+- Preserved loose folders and their contents as strictly out of scope.
+- Displayed organized files in the read-only library without re-queuing them.
+- Added format-only and optional Apple Intelligence classification modes.
+- Added custom categories, profiles, previews, teaching and Undo.

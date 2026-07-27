@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Whitespace check
+        run: git diff --check
+
+      - name: Test
+        run: swift test
+
+      - name: Release build
+        run: swift build -c release
+
+      - name: Package and verify signature
+        run: |
+          ./Scripts/package-app.sh
+          codesign --verify --deep --strict "dist/FileMorrow.app"
+          codesign -dv --verbose=2 "dist/FileMorrow.app"
