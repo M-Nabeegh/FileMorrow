@@ -5,7 +5,6 @@ import UniformTypeIdentifiers
 struct RootView: View {
     @State var state: AppState
     @Environment(\.scenePhase) private var scenePhase
-    @State private var showOrganizeConfirmation = false
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var showOnboarding = false
     @State private var hasPerformedInitialScan = false
@@ -53,7 +52,7 @@ struct RootView: View {
                 }
 
                 Button {
-                    showOrganizeConfirmation = true
+                    state.prepareOrganizationProposal()
                 } label: {
                     Label("Organize", systemImage: "folder.badge.plus")
                 }
@@ -64,21 +63,19 @@ struct RootView: View {
                 Button {
                     Task { await state.undoLastMove() }
                 } label: {
-                    Label("Undo", systemImage: "arrow.uturn.backward")
+                    Label(
+                        state.lastOrganizedCount > 0
+                            ? "Undo Last Organization (\(state.lastOrganizedCount))"
+                            : "Undo Last Organization",
+                        systemImage: "arrow.uturn.backward"
+                    )
                 }
                 .disabled(state.isWorking)
+                .keyboardShortcut("z", modifiers: .command)
             }
         }
-        .confirmationDialog(
-            "Organize \(state.approvedReadyFiles.count) approved files?",
-            isPresented: $showOrganizeConfirmation
-        ) {
-            Button("Move into category folders") {
-                Task { await state.organizeApproved() }
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("Only files older than the archive window and above your confidence threshold will move into category folders directly inside Downloads. You can undo the batch.")
+        .sheet(item: $state.organizationProposal) { proposal in
+            OrganizationPlanView(state: state, proposal: proposal)
         }
         .sheet(isPresented: $showOnboarding) {
             OnboardingView(
@@ -279,17 +276,44 @@ private struct DuplicateCenterView: View {
                     .foregroundStyle(.orange)
                 }
                 Spacer()
-                Button(state.isScanningDuplicates ? "Scanning…" : "Find Duplicates") {
-                    Task { await state.scanDuplicates() }
+                if state.isScanningDuplicates {
+                    Button("Stop Scan", role: .cancel) {
+                        state.cancelDuplicateScan()
+                    }
+                    .buttonStyle(.bordered)
+                } else {
+                    Button("Find Duplicates") {
+                        state.startDuplicateScan()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(state.isWorking)
                 }
-                .buttonStyle(.borderedProminent)
-                .disabled(state.isWorking)
             }
             .padding(20)
 
             Divider()
 
-            if state.duplicateGroups.isEmpty {
+            if state.isScanningDuplicates, let scan = state.duplicateScanProgress {
+                VStack(spacing: 14) {
+                    ProgressView(value: scan.fraction)
+                        .frame(maxWidth: 420)
+                    Text(scan.stage.rawValue)
+                        .font(.headline)
+                    Text("\(scan.completedFiles.formatted()) of \(scan.totalFiles.formatted()) checks")
+                        .foregroundStyle(.secondary)
+                    if let current = scan.currentFile {
+                        Text(current)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                    Text(ByteCountFormatter.string(fromByteCount: scan.processedBytes, countStyle: .file) + " read")
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(.tertiary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding()
+            } else if state.duplicateGroups.isEmpty {
                 ContentUnavailableView(
                     "No duplicate scan results",
                     systemImage: "doc.on.doc",
@@ -343,6 +367,65 @@ private struct DuplicateCenterView: View {
         } message: { group in
             Text("FileMorrow will keep \(group.keeper.path). Verify every path: nested project and app files may intentionally be identical. Confirmed SHA-256-identical extras move to recoverable macOS Trash.")
         }
+    }
+}
+
+private struct OrganizationPlanView: View {
+    @Bindable var state: AppState
+    let proposal: OrganizationProposal
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            Label("Review before organizing", systemImage: "checklist")
+                .font(.title2.bold())
+                .foregroundStyle(.indigo)
+
+            Text(proposal.automaticCheck
+                 ? "FileMorrow’s automatic check found files that are ready. Do you want to arrange your Downloads now?"
+                 : "Do you want to arrange these Downloads now?")
+                .font(.title3.weight(.semibold))
+
+            HStack {
+                Label("\(proposal.fileCount) files", systemImage: "doc.on.doc")
+                Spacer()
+                Text(ByteCountFormatter.string(fromByteCount: proposal.totalSize, countStyle: .file))
+                    .foregroundStyle(.secondary)
+            }
+
+            List(proposal.categoryCounts, id: \.name) { item in
+                HStack {
+                    Text(item.name)
+                    Spacer()
+                    Text(item.count.formatted())
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                }
+            }
+            .frame(minHeight: 150)
+
+            Label(
+                "Nothing is deleted. Only eligible loose files move, and Undo Last Organization can restore this entire batch.",
+                systemImage: "arrow.uturn.backward.circle.fill"
+            )
+            .foregroundStyle(.green)
+            .fontWeight(.medium)
+
+            HStack {
+                Button("Not Now", role: .cancel) {
+                    state.organizationProposal = nil
+                    state.status = "Organization postponed • No files moved"
+                }
+                Spacer()
+                Button("Organize \(proposal.fileCount) Files") {
+                    Task { await state.organizeApproved() }
+                }
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
+            }
+        }
+        .padding(24)
+        .frame(width: 520, height: 460)
+        .interactiveDismissDisabled(state.isWorking)
     }
 }
 
@@ -693,7 +776,7 @@ struct SettingsView: View {
                 }
 
                 Section("Archive") {
-                    Toggle("Automatically organize old files", isOn: Binding(
+                    Toggle("Check hourly and ask before organizing", isOn: Binding(
                         get: { state.automaticOrganization },
                         set: { state.setAutomaticOrganization($0) }
                     ))

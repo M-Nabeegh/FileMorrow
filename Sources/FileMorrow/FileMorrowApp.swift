@@ -59,6 +59,11 @@ struct FileMorrowApp: App {
                 }
                 .keyboardShortcut("a", modifiers: [.command, .shift])
 
+                Button("Undo Last Organization") {
+                    Task { await state.undoLastMove() }
+                }
+                .keyboardShortcut("z", modifiers: .command)
+
                 Button("Show Welcome Guide") {
                     state.requestOnboarding()
                 }
@@ -90,7 +95,7 @@ private struct FileMorrowMenu: View {
 
         Text(state.status)
         Text("\(state.files.count.formatted()) files • \(state.readyFiles.count.formatted()) ready")
-        Text(state.automaticOrganization ? "Automatic organization: On" : "Automatic organization: Off")
+        Text(state.automaticOrganization ? "Automatic checks: On • approval required" : "Automatic checks: Off")
 
         Divider()
 
@@ -99,13 +104,18 @@ private struct FileMorrowMenu: View {
         }
         .disabled(state.isWorking)
 
-        Button("Check & Organize Now") {
-            Task { await state.runAutomaticOrganization() }
+        Button(state.organizationProposal == nil ? "Check & Organize Now" : "Review Organization Plan") {
+            if state.organizationProposal == nil {
+                Task { await state.checkAndPrepareOrganization() }
+            } else {
+                openWindow(id: "main")
+                NSApplication.shared.activate()
+            }
         }
-        .disabled(state.isWorking || !state.automaticOrganization)
+        .disabled(state.isWorking)
 
         Button("Scan for Duplicates") {
-            Task { await state.scanDuplicates() }
+            state.startDuplicateScan()
         }
         .disabled(state.isWorking)
 
