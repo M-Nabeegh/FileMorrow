@@ -21,11 +21,14 @@ final class AppState {
     var classificationMode = ClassificationMode(
         rawValue: UserDefaults.standard.string(forKey: "classificationMode") ?? ""
     ) ?? .formatOnly
-    var automaticOrganization = UserDefaults.standard.object(forKey: "automaticOrganization") as? Bool ?? true
-    var launchAtLogin = UserDefaults.standard.object(forKey: "launchAtLogin") as? Bool ?? true
+    var automaticOrganization = UserDefaults.standard.object(forKey: "automaticOrganization") as? Bool ?? false
+    var launchAtLogin = UserDefaults.standard.object(forKey: "launchAtLogin") as? Bool ?? false
     var keepInDock = UserDefaults.standard.object(forKey: "keepInDock") as? Bool ?? true
     var duplicateGroups: [DuplicateGroup] = []
     var isScanningDuplicates = false
+    var duplicateScanProgress: DuplicateScanProgress?
+    var organizationProposal: OrganizationProposal?
+    var lastOrganizedCount = 0
     var onboardingRequestID: UUID?
     var profile = ProfileStore.fallback
     private var shouldCancelAnalysis = false
@@ -39,6 +42,7 @@ final class AppState {
     @ObservationIgnored private let folderBranding = FolderBrandingService()
     @ObservationIgnored private lazy var organizer = OrganizerService(store: store)
     @ObservationIgnored private var automaticTask: Task<Void, Never>?
+    @ObservationIgnored private var duplicateScanTask: Task<Void, Never>?
     @ObservationIgnored let downloadsURL = FileManager.default.homeDirectoryForCurrentUser.appending(path: "Downloads")
 
     private var archiveDays: Int { max(1, UserDefaults.standard.integer(forKey: "archiveDays").nonZero(or: 7)) }
@@ -102,6 +106,7 @@ final class AppState {
 
     deinit {
         automaticTask?.cancel()
+        duplicateScanTask?.cancel()
     }
 
     func definition(for category: ArchiveCategory) -> CategoryDefinition {
@@ -153,8 +158,8 @@ final class AppState {
         automaticOrganization = enabled
         UserDefaults.standard.set(enabled, forKey: "automaticOrganization")
         status = enabled
-            ? "Automatic organization is on • Checks hourly"
-            : "Automatic organization is off"
+            ? "Automatic checks are on • Approval is required before every move"
+            : "Automatic checks are off"
         if enabled {
             Task { await runAutomaticOrganization() }
         }
@@ -211,9 +216,16 @@ final class AppState {
             return
         }
 
-        let count = approvedReadyFiles.count
-        await organizeApproved()
-        status = "Automatically organized \(count) files older than \(archiveDays) days"
+        prepareOrganizationProposal(automaticCheck: true)
+    }
+
+    func checkAndPrepareOrganization() async {
+        guard !isWorking else { return }
+        await scan()
+        if classificationMode == .smartContent, intelligenceReady, !awaitingAnalysisFiles.isEmpty {
+            await analyzeReady()
+        }
+        prepareOrganizationProposal()
     }
 
     func completeOnboarding(
@@ -227,11 +239,10 @@ final class AppState {
         await setClassificationMode(mode)
         setLaunchAtLogin(launchEnabled)
         status = enabled
-            ? "Setup complete • Automatic checks run hourly"
-            : "Setup complete • Automatic organization is off"
-        if enabled {
-            await runAutomaticOrganization()
-        }
+            ? "Setup complete • Hourly checks ask before moving files"
+            : "Setup complete • Automatic checks are off"
+        await scan()
+        if enabled { prepareOrganizationProposal(automaticCheck: true) }
     }
 
     func analyzeReady(limit: Int? = nil) async {
@@ -324,17 +335,42 @@ final class AppState {
         status = "Stopping after the current file…"
     }
 
+    func startDuplicateScan() {
+        guard !isWorking else { return }
+        duplicateScanTask?.cancel()
+        duplicateScanTask = Task { await scanDuplicates() }
+    }
+
     func scanDuplicates() async {
         guard !isWorking else { return }
         isWorking = true
         isScanningDuplicates = true
+        duplicateScanProgress = nil
         status = "Finding exact duplicates…"
-        duplicateGroups = await duplicateScanner.scan(root: downloadsURL)
+        let result = await duplicateScanner.scan(root: downloadsURL) { [weak self] update in
+            await MainActor.run {
+                self?.duplicateScanProgress = update
+                self?.progress = update.fraction
+                self?.status = update.currentFile.map {
+                    "\(update.stage.rawValue) • \($0)"
+                } ?? update.stage.rawValue
+            }
+        }
+        if !Task.isCancelled { duplicateGroups = result }
         isScanningDuplicates = false
         isWorking = false
-        status = duplicateGroups.isEmpty
-            ? "No exact duplicates found"
-            : "Found \(duplicateExtraCount) potential duplicate copies to review"
+        progress = nil
+        duplicateScanProgress = nil
+        status = Task.isCancelled
+            ? "Duplicate scan stopped"
+            : duplicateGroups.isEmpty
+                ? "No exact duplicates found"
+                : "Found \(duplicateExtraCount) potential duplicate copies to review"
+    }
+
+    func cancelDuplicateScan() {
+        duplicateScanTask?.cancel()
+        status = "Stopping duplicate scan…"
     }
 
     func trashDuplicateExtras(in group: DuplicateGroup) async {
@@ -467,6 +503,24 @@ final class AppState {
         }
     }
 
+    func prepareOrganizationProposal(automaticCheck: Bool = false) {
+        let candidates = approvedReadyFiles
+        guard !candidates.isEmpty else {
+            status = "Nothing is ready to organize"
+            return
+        }
+        let grouped = Dictionary(grouping: candidates) { definition(for: $0.category).name }
+        organizationProposal = .init(
+            fileCount: candidates.count,
+            totalSize: candidates.reduce(0) { $0 + $1.size },
+            categoryCounts: grouped.map { ($0.key, $0.value.count) }.sorted { $0.name < $1.name },
+            automaticCheck: automaticCheck
+        )
+        status = automaticCheck
+            ? "Automatic check found \(candidates.count) files • Waiting for your approval"
+            : "Review the organization plan"
+    }
+
     func organizeApproved() async {
         guard !isWorking else { return }
         isWorking = true
@@ -479,7 +533,9 @@ final class AppState {
                 minimumConfidence: minimumConfidence,
                 profile: profile
             )
-            status = "Organized \(count) files • Undo is available"
+            lastOrganizedCount = count
+            organizationProposal = nil
+            status = "Organized \(count) files • Undo Last Organization is available"
             await scan()
         } catch {
             lastError = error.localizedDescription
@@ -494,6 +550,7 @@ final class AppState {
         defer { isWorking = false }
         do {
             let count = try await organizer.undoLast()
+            if count > 0 { lastOrganizedCount = 0 }
             status = count == 0 ? "Nothing to undo" : "Restored \(count) files"
             await scan()
         } catch {

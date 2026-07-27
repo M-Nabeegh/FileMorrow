@@ -2,6 +2,21 @@
 
 All notable FileMorrow changes are documented here.
 
+## 1.7 — 2026-07-27
+
+- Add a plan-first approval sheet showing file count, size, and destinations
+  before any eligible file moves.
+- Require approval for hourly checks instead of silently organizing files.
+- Make Undo Last Organization explicit in the toolbar, app menu, status, and
+  Command-Z shortcut.
+- Speed up duplicate discovery with a first/last-block fingerprint before full
+  SHA-256 verification.
+- Add duplicate-scan stage, file, byte, and progress reporting with a Stop
+  control.
+- Cache verified hashes during the session and skip unavailable cloud
+  placeholders.
+- Default first-launch automatic checks and Launch at Login to off.
+
 ## 1.6 — 2026-07-27
 
 - Keep the menu-bar companion alive when the main window closes.

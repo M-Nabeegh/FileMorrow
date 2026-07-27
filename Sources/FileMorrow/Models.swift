@@ -142,6 +142,33 @@ struct DuplicateGroup: Identifiable, Hashable, Sendable {
     var wastedSize: Int64 { fileSize * Int64(extras.count) }
 }
 
+struct DuplicateScanProgress: Sendable {
+    enum Stage: String, Sendable {
+        case fingerprinting = "Comparing candidates"
+        case verifying = "Verifying exact matches"
+    }
+
+    let stage: Stage
+    let completedFiles: Int
+    let totalFiles: Int
+    let processedBytes: Int64
+    let totalBytes: Int64
+    let currentFile: String?
+
+    var fraction: Double? {
+        guard totalBytes > 0 else { return nil }
+        return min(1, Double(processedBytes) / Double(totalBytes))
+    }
+}
+
+struct OrganizationProposal: Identifiable, Sendable {
+    let id = UUID()
+    let fileCount: Int
+    let totalSize: Int64
+    let categoryCounts: [(name: String, count: Int)]
+    let automaticCheck: Bool
+}
+
 struct FileRecord: Identifiable, Hashable, Sendable {
     var id: String { url.path }
     let url: URL

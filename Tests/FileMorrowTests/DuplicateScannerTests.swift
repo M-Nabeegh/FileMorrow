@@ -65,4 +65,37 @@ final class DuplicateScannerTests: XCTestCase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: group.keeper.path))
         XCTAssertEqual(try FileManager.default.contentsOfDirectory(atPath: recovery.path).count, 1)
     }
+
+    func testScanReportsFingerprintAndVerificationProgress() async throws {
+        let root = FileManager.default.temporaryDirectory
+            .appending(path: UUID().uuidString, directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+
+        let bytes = Data(repeating: 7, count: 300_000)
+        try bytes.write(to: root.appending(path: "first.bin"))
+        try bytes.write(to: root.appending(path: "second.bin"))
+
+        let collector = ProgressCollector()
+        let groups = await DuplicateScanner().scan(root: root) { update in
+            await collector.append(update)
+        }
+        let stages = await collector.stages
+
+        XCTAssertEqual(groups.count, 1)
+        XCTAssertTrue(stages.contains(.fingerprinting))
+        XCTAssertTrue(stages.contains(.verifying))
+    }
+}
+
+private actor ProgressCollector {
+    private var values: [DuplicateScanProgress] = []
+
+    func append(_ value: DuplicateScanProgress) {
+        values.append(value)
+    }
+
+    var stages: Set<DuplicateScanProgress.Stage> {
+        Set(values.map(\.stage))
+    }
 }

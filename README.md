@@ -3,8 +3,8 @@
 <p align="center">
   <img src="Assets/FileMorrowIconTransparent.png" width="128" alt="FileMorrow app icon">
   <br><br>
-  <a href="https://github.com/M-Nabeegh/FileMorrow/releases/download/v1.6/FileMorrow-1.6-macOS.dmg">
-    <img src="https://img.shields.io/badge/Download_DMG-v1.6-6C63FF?style=for-the-badge&logo=apple&logoColor=white" alt="Download FileMorrow 1.6 DMG">
+  <a href="https://github.com/M-Nabeegh/FileMorrow/releases/download/v1.7/FileMorrow-1.7-macOS.dmg">
+    <img src="https://img.shields.io/badge/Download_DMG-v1.7-6C63FF?style=for-the-badge&logo=apple&logoColor=white" alt="Download FileMorrow 1.7 DMG">
   </a>
 </p>
 
@@ -60,8 +60,9 @@ batch can be undone.
 - Editable, importable, and exportable organization profiles
 - User-selectable and fully custom categories
 - Confidence-gated organization
-- Batch undo and collision-safe moves
-- Exact duplicate detection with SHA-256 and recoverable Trash cleanup
+- Plan-first approval before any eligible file moves
+- Explicit **Undo Last Organization**, Command-Z, and collision-safe moves
+- Progress-aware, cancellable exact duplicate detection with SHA-256 and recoverable Trash cleanup
 - Top-level-only organization: downloaded folders and their contents are never moved
 - Read-only recursive duplicate scanning, with explicit confirmation before Trash
 - Color-coded Finder icons distinguish FileMorrow-managed category folders from ordinary folders
@@ -149,12 +150,12 @@ it never removes anything without explicit confirmation.
 ## Menu bar
 
 The menu-bar companion remains available when the main window is closed. It can
-reopen the app, rescan Downloads, check and organize eligible files, check for
-duplicates, open Settings, or quit. By default the app launches at login and
-checks hourly. Only loose files older than the configured age (seven days by
-default) are moved. Deterministic format matches move automatically; uncertain
-files remain for review. Both automatic organization and Launch at Login can be
-disabled in Settings.
+reopen the app, rescan Downloads, prepare an organization plan, check for
+duplicates, open Settings, or quit. Automatic checks and Launch at Login are
+opt-in. Hourly checks never move files silently: FileMorrow shows the eligible
+count, size, and destinations and waits for approval. Only loose files older
+than the configured age (seven days by default) are eligible, and uncertain
+files remain for review.
 
 Turn off **Settings → Organization → Keep FileMorrow in the Dock** for a
 menu-bar-only experience. The app continues running after its windows close and
@@ -206,7 +207,7 @@ when macOS itself prepares Apple Intelligence.
 
 ## First launch
 
-Before any automatic organization or Launch at Login registration, onboarding
+Before any automatic check or Launch at Login registration, onboarding
 explains:
 
 1. Files stay loose for seven days.
