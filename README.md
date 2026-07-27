@@ -2,6 +2,10 @@
 
 <p align="center">
   <img src="Assets/FileMorrowIcon.png" width="128" alt="FileMorrow app icon">
+  <br><br>
+  <a href="https://github.com/M-Nabeegh/FileMorrow/releases/download/v1.5.1/FileMorrow-1.5.1-macOS.dmg">
+    <img src="https://img.shields.io/badge/Download_DMG-v1.5.1-6C63FF?style=for-the-badge&logo=apple&logoColor=white" alt="Download FileMorrow 1.5.1 DMG">
+  </a>
 </p>
 
 <p align="center">
