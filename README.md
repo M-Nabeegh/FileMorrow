@@ -17,12 +17,11 @@
 <p align="center">
   <a href="https://github.com/M-Nabeegh/FileMorrow/actions/workflows/ci.yml"><img src="https://github.com/M-Nabeegh/FileMorrow/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/M-Nabeegh/FileMorrow/releases/latest"><img src="https://img.shields.io/github/v/release/M-Nabeegh/FileMorrow" alt="Latest release"></a>
-  <a href="https://github.com/M-Nabeegh/FileMorrow/releases"><img src="https://img.shields.io/github/downloads/M-Nabeegh/FileMorrow/total" alt="Total release downloads"></a>
   <img src="https://img.shields.io/badge/privacy-local--first-5b5bd6" alt="Local-first privacy">
 </p>
 
 <p align="center">
-  <img src="docs/images/onboarding.png" width="900" alt="FileMorrow welcome guide with format and Smart Content modes">
+  <img src="docs/images/onboarding.png" width="560" alt="FileMorrow welcome guide with format and Smart Content modes">
 </p>
 
 FileMorrow keeps fresh files in **Today**, **Yesterday**, and **Last 7
@@ -139,9 +138,11 @@ move for undo.
 FileMorrow persists each top-level file's first-seen date locally. Moving
 or undoing a file therefore does not reset the seven-day eligibility window.
 
-The organizer and duplicate finder operate only on loose regular files directly
-inside `~/Downloads`. Existing, newly created, and newly downloaded folders are
-always left in place, and the app never enters or modifies their contents.
+The organizer operates only on loose regular files directly inside
+`~/Downloads`. Existing, newly created, and newly downloaded folders are always
+left in place, and the organizer never moves or modifies their contents. The
+duplicate finder can read files recursively to compare exact SHA-256 hashes, but
+it never removes anything without explicit confirmation.
 
 ## Menu bar
 
@@ -154,7 +155,7 @@ files remain for review. Both automatic organization and Launch at Login can be
 disabled in Settings.
 
 <p align="center">
-  <img src="docs/images/finder-folders.png" width="420" alt="Color-coded FileMorrow category folders in Finder">
+  <img src="docs/images/finder-folders.png" width="300" alt="Color-coded FileMorrow category folders in Finder">
 </p>
 
 Choose **Show Welcome Guide** from the FileMorrow app menu, menu-bar companion,
@@ -203,7 +204,7 @@ explains:
 6. Smart Content availability depends on the Mac and Apple Intelligence setup.
 
 <p align="center">
-  <img src="docs/images/menu-bar.png" width="420" alt="FileMorrow menu-bar companion showing automatic organization controls">
+  <img src="docs/images/menu-bar.png" width="300" alt="FileMorrow menu-bar companion showing automatic organization controls">
 </p>
 
 ## Project structure
