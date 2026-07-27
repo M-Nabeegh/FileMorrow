@@ -2,6 +2,11 @@
 
 All notable FileMorrow changes are documented here.
 
+## 1.5.1 — 2026-07-27
+
+- Rescan automatically whenever FileMorrow becomes active after using Finder.
+- Remove deleted file rows and clear their stale inspector selection.
+
 ## 1.5 — 2026-07-27
 
 - Added consent-first onboarding for the seven-day rule, folder boundary,

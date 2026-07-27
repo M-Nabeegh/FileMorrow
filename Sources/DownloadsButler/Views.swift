@@ -4,9 +4,11 @@ import UniformTypeIdentifiers
 
 struct RootView: View {
     @State var state: AppState
+    @Environment(\.scenePhase) private var scenePhase
     @State private var showOrganizeConfirmation = false
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var showOnboarding = false
+    @State private var hasPerformedInitialScan = false
 
     var body: some View {
         NavigationSplitView {
@@ -93,7 +95,12 @@ struct RootView: View {
         }
         .task {
             await state.scan()
+            hasPerformedInitialScan = true
             showOnboarding = !hasCompletedOnboarding
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            guard newPhase == .active, hasPerformedInitialScan else { return }
+            Task { await state.refreshAfterActivation() }
         }
     }
 }

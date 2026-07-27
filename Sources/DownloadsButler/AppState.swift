@@ -128,6 +128,20 @@ final class AppState {
         if selectedFileID != nil && selectedFile == nil { selectedFileID = nil }
     }
 
+    func refreshAfterActivation() async {
+        guard !isWorking else { return }
+        let previousCount = files.count
+        let previousSelection = selectedFileID
+        await scan()
+
+        let removedCount = max(0, previousCount - files.count)
+        if removedCount > 0 {
+            status = "Refreshed • Removed \(removedCount) deleted file\(removedCount == 1 ? "" : "s")"
+        } else if previousSelection != nil, selectedFileID == nil {
+            status = "Refreshed • Cleared deleted file preview"
+        }
+    }
+
     func setAutomaticOrganization(_ enabled: Bool) {
         automaticOrganization = enabled
         UserDefaults.standard.set(enabled, forKey: "automaticOrganization")
