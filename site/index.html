@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FileMorrow · Downloads organizer for macOS</title>
+<meta name="description" content="FileMorrow keeps your Downloads folder tidy on macOS. New files stay put for seven days, older ones go into folders, and every batch can be undone. Free and open source.">
+<link rel="icon" href="icon.png" type="image/png">
+<link rel="apple-touch-icon" href="icon.png">
+<meta property="og:title" content="FileMorrow">
+<meta property="og:description" content="A private Downloads organizer for macOS. Free, open source, runs on your Mac.">
+<meta property="og:image" content="https://m-nabeegh.github.io/FileMorrow/img/onboarding.png">
+<meta property="og:type" content="website">
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f7f6f3;
+    --surface: #ffffff;
+    --ink: #1b1a22;
+    --ink-2: #4d4b57;
+    --ink-3: #7d7b87;
+    --line: rgba(27, 26, 34, 0.1);
+    --accent: #3b2a9e;
+    --accent-ink: #ffffff;
+    --accent-soft: rgba(59, 42, 158, 0.08);
+    --amber: #b7790f;
+    --ok: #18794e;
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141419;
+      --surface: #1d1d24;
+      --ink: #ececf1;
+      --ink-2: #b4b3bf;
+      --ink-3: #85848f;
+      --line: rgba(255, 255, 255, 0.09);
+      --accent: #8f7ff0;
+      --accent-ink: #14121f;
+      --accent-soft: rgba(143, 127, 240, 0.12);
+      --amber: #f0b542;
+      --ok: #4cc38a;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  }
+  a { color: var(--accent); }
+  img { max-width: 100%; height: auto; display: block; }
+  code { font: 0.88em ui-monospace, "SF Mono", Menlo, monospace; background: var(--accent-soft); padding: 0.1em 0.35em; border-radius: 5px; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+  header.top { border-bottom: 1px solid var(--line); }
+  header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 650; color: var(--ink); text-decoration: none; }
+  .brand img { width: 28px; height: 28px; }
+  nav a { color: var(--ink-2); text-decoration: none; margin-left: 22px; font-size: 15px; }
+  nav a:hover { color: var(--ink); }
+
+  .hero { padding-top: 64px; padding-bottom: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .hero h1 { font-size: 2.6rem; line-height: 1.12; letter-spacing: -0.025em; margin: 0 0 16px; font-weight: 700; }
+  .hero p.lead { font-size: 1.15rem; color: var(--ink-2); margin: 0 0 28px; max-width: 30em; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: 16px; text-decoration: none; }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); }
+  .btn.primary:hover { filter: brightness(1.08); }
+  .btn.ghost { color: var(--ink); border: 1px solid var(--line); background: var(--surface); }
+  .meta { margin-top: 16px; color: var(--ink-3); font-size: 14px; }
+  .shot { border-radius: var(--radius); border: 1px solid var(--line); box-shadow: 0 18px 50px rgba(0, 0, 0, 0.14); }
+
+  section { padding: 56px 0; border-top: 1px solid var(--line); }
+  section h2 { font-size: 1.75rem; letter-spacing: -0.02em; margin: 0 0 10px; }
+  section > .wrap > p.intro { color: var(--ink-2); max-width: 40em; margin: 0 0 32px; }
+
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+  .card h3 { font-size: 1.05rem; margin: 0 0 6px; }
+  .card p { margin: 0; color: var(--ink-2); font-size: 15.5px; }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); margin-right: 8px; vertical-align: 1px; }
+  .dot.amber { background: var(--amber); }
+  .dot.ok { background: var(--ok); }
+
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; font-size: 15.5px; }
+  th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  th { font-weight: 600; background: var(--accent-soft); }
+  td:first-child { color: var(--ink-3); width: 26%; }
+  .table-scroll { overflow-x: auto; }
+
+  .split { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items: center; }
+  .split.rev { grid-template-columns: 0.9fr 1.1fr; }
+  .split ul { padding-left: 1.1em; color: var(--ink-2); margin: 0; }
+  .split li { margin-bottom: 8px; }
+  .narrow-shot { max-width: 300px; margin: 0 auto; }
+
+  ol.steps { padding-left: 1.2em; color: var(--ink-2); max-width: 44em; }
+  ol.steps li { margin-bottom: 10px; }
+  .note { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--amber); border-radius: 10px; padding: 14px 18px; color: var(--ink-2); font-size: 15px; max-width: 44em; }
+
+  footer { border-top: 1px solid var(--line); padding: 32px 0 48px; color: var(--ink-3); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; }
+  footer a { color: var(--ink-2); }
+
+  @media (max-width: 820px) {
+    .hero, .split, .split.rev { grid-template-columns: 1fr; }
+    .hero { padding-top: 40px; gap: 32px; }
+    .wrap { padding-left: 16px; padding-right: 16px; }
+    .hero h1 { font-size: 2.1rem; }
+    .grid3 { grid-template-columns: 1fr; }
+    nav a.hide-sm { display: none; }
+    .split.rev .media { order: 2; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./"><img src="icon.png" alt="">FileMorrow</a>
+    <nav>
+      <a class="hide-sm" href="#how">How it works</a>
+      <a class="hide-sm" href="#privacy">Privacy</a>
+      <a href="https://github.com/M-Nabeegh/FileMorrow">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <div>
+      <h1>A Downloads folder that tidies itself up</h1>
+      <p class="lead">FileMorrow leaves new downloads alone for a week, then moves older loose files into folders by type. Every batch can be undone, and nothing leaves your Mac.</p>
+      <div class="actions">
+        <a class="btn primary" href="https://github.com/M-Nabeegh/FileMorrow/releases/latest">Download for Mac</a>
+        <a class="btn ghost" href="https://github.com/M-Nabeegh/FileMorrow">View source</a>
+      </div>
+      <p class="meta">Free and open source (MIT) · macOS 14 Sonoma or later · <span id="version">latest release on GitHub</span></p>
+    </div>
+    <img class="shot" src="img/onboarding.png" width="1392" height="1344" alt="FileMorrow welcome screen explaining the seven-day head start, classification modes and undo">
+  </div>
+
+  <section id="how">
+    <div class="wrap">
+      <h2>How it works</h2>
+      <p class="intro">You keep using Downloads the way you do now. FileMorrow only steps in for files you have stopped touching.</p>
+      <div class="grid3">
+        <div class="card">
+          <h3><span class="dot"></span>New files stay put</h3>
+          <p>Today, Yesterday and Last 7 Days stay where they landed. Only loose files older than a week are organized.</p>
+        </div>
+        <div class="card">
+          <h3><span class="dot amber"></span>Folders are never moved</h3>
+          <p>A folder you downloaded, and everything inside it, is left exactly where it is.</p>
+        </div>
+        <div class="card">
+          <h3><span class="dot ok"></span>Undo is always there</h3>
+          <p>Each organization run is recorded. Undo Last Organization or press Command-Z to put files back.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Two ways to sort</h2>
+      <p class="intro">Sorting by file type is the default and needs nothing extra. Sorting by subject is optional and uses Apple Intelligence on your Mac.</p>
+      <div class="table-scroll">
+        <table>
+          <tr><th></th><th>By file format</th><th>Smart content</th></tr>
+          <tr><td>Default</td><td>Yes</td><td>Off until you turn it on</td></tr>
+          <tr><td>Sorts by</td><td>Extension and system file type: PDFs to Documents, audio to Music</td><td>Filename and text read from the file, then Apple's on-device model if still unsure</td></tr>
+          <tr><td>Needs</td><td>macOS 14 or later</td><td>macOS 26 with Apple Intelligence turned on</td></tr>
+          <tr><td>Good for</td><td>Hands-off cleanup that always does the same thing</td><td>Mixed folders like University, Finance, Medical or Work</td></tr>
+          <tr><td>When unsure</td><td colspan="2">The file stays in Needs Review until you decide. You can correct it once and FileMorrow remembers.</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Get space back</h2>
+      <p class="intro">Three cleanup tools that only list what they can prove is safe to remove. You pick the files, and they go to the Trash, not straight to deletion.</p>
+      <div class="grid3">
+        <div class="card">
+          <h3>Duplicates</h3>
+          <p>Exact matches by SHA-256 hash. You choose which copy to keep before anything is removed.</p>
+        </div>
+        <div class="card">
+          <h3>Unpacked ZIP files</h3>
+          <p>Archives you already extracted. Every file in the ZIP has to be in the folder at the same size, or the archive is left alone.</p>
+        </div>
+        <div class="card">
+          <h3>Used installers</h3>
+          <p><code>.dmg</code> and <code>.pkg</code> files for apps you already have installed. An installer newer than your app is never listed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap split">
+      <div>
+        <h2>Lives in the menu bar</h2>
+        <p class="intro">Close the window and FileMorrow keeps running quietly. From the menu bar you can rescan, check for duplicates, run a cleanup or open the app again.</p>
+        <ul>
+          <li>Automatic organization runs once an hour and can be switched off.</li>
+          <li>Turn off "Keep FileMorrow in the Dock" if you only want the menu bar icon.</li>
+          <li>Folders FileMorrow creates get coloured icons in Finder, so you can tell them apart from your own.</li>
+        </ul>
+      </div>
+      <div class="media" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+        <img class="shot" src="img/menu-bar.png" width="734" height="542" alt="FileMorrow menu bar menu with organization controls">
+        <img class="shot" src="img/finder-folders.png" width="480" height="532" alt="Colour-coded FileMorrow category folders in Finder">
+      </div>
+    </div>
+  </section>
+
+  <section id="privacy">
+    <div class="wrap">
+      <h2>Your files stay on your Mac</h2>
+      <p class="intro">There is no server, account, analytics or upload code in FileMorrow. Text it reads from a file is used to sort that file and nothing else.</p>
+      <div class="grid3">
+        <div class="card"><h3>On-device model</h3><p>Smart content uses Apple's Foundation Models framework, which runs locally.</p></div>
+        <div class="card"><h3>Nothing moves without a plan</h3><p>Nothing moves until a plan is approved, either by you or by the automatic setting you chose.</p></div>
+        <div class="card"><h3>Open source</h3><p>The whole app is on GitHub under the MIT license, with tests for undo, duplicates, archives and installers.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="wrap">
+      <h2>Install</h2>
+      <ol class="steps">
+        <li>Download the <code>.dmg</code> and <code>SHA256SUMS.txt</code> from the <a href="https://github.com/M-Nabeegh/FileMorrow/releases/latest">latest release</a>.</li>
+        <li>Check the download: <code>shasum -a 256 -c SHA256SUMS.txt</code></li>
+        <li>Drag FileMorrow into Applications and open it once.</li>
+        <li>If macOS blocks it, go to System Settings → Privacy &amp; Security and click Open Anyway.</li>
+      </ol>
+      <p class="note">FileMorrow is not notarized by Apple, because it is an independent project without a paid Apple Developer account. Only allow it if the file came from this GitHub repository and the checksum matches.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>FileMorrow is made by <a href="https://github.com/M-Nabeegh">Muhammad Nabeegh</a>.</span>
+    <span><a href="https://github.com/M-Nabeegh/FileMorrow">Source</a> · <a href="https://github.com/M-Nabeegh/FileMorrow/blob/main/CHANGELOG.md">Changelog</a> · <a href="https://github.com/M-Nabeegh/FileMorrow/issues">Report a problem</a></span>
+  </div>
+</footer>
+
+<script>
+  fetch("https://api.github.com/repos/M-Nabeegh/FileMorrow/releases/latest")
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (rel) {
+      if (!rel || !rel.tag_name) return;
+      document.getElementById("version").textContent = "Version " + rel.tag_name.replace(/^v/, "");
+      var dmg = (rel.assets || []).find(function (a) { return /\.dmg$/i.test(a.name); });
+      if (dmg) document.querySelector(".btn.primary").href = dmg.browser_download_url;
+    })
+    .catch(function () {});
+</script>
+</body>
+</html>
