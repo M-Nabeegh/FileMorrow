@@ -1,0 +1,63 @@
+name: Bug report
+description: Something FileMorrow did wrong, or did not do
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please do not attach real documents or paste private file names. A made-up file with the same name pattern and type is enough.
+        For security problems, use the private form described in SECURITY.md instead of a public issue.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what FileMorrow did instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Put a file named "example invoice.pdf" in Downloads
+        2. Click Scan
+        3. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Organizing and Undo
+        - Classification (Format Only)
+        - Classification (Smart Content)
+        - Duplicates
+        - Unpacked archives
+        - Installers
+        - Settings or categories
+        - Installing or launching
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: FileMorrow version
+      description: FileMorrow menu, About FileMorrow
+      placeholder: "1.8.0"
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version and Mac
+      placeholder: "macOS 26.1, MacBook Air M4"
+    validations:
+      required: true
+  - type: checkboxes
+    id: files-moved
+    attributes:
+      label: Were files moved or trashed unexpectedly?
+      options:
+        - label: Yes, and Undo Last Organization or the Trash did not bring them back
