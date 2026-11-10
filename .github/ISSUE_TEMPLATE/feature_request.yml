@@ -1,0 +1,22 @@
+name: Feature request
+description: Suggest something FileMorrow should do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: The situation you are in, not the solution. For example, "screenshots pile up on my Desktop, not in Downloads".
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help?
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: Could this move or delete the wrong file?
+      description: FileMorrow only acts when it can undo the action or verify it first. If your idea touches files, say how a mistake would be caught or reversed.

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or idea to talk through
+    url: https://github.com/M-Nabeegh/FileMorrow/discussions
+    about: Ask how something works or float an idea before filing a request.
+  - name: Security problem
+    url: https://github.com/M-Nabeegh/FileMorrow/security/advisories/new
+    about: Report a vulnerability privately.

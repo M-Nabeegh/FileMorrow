@@ -2,6 +2,18 @@
 
 All notable FileMorrow changes are documented here.
 
+## Unreleased
+
+- Add Check for Updates to the FileMorrow menu, the menu-bar companion and
+  Settings. It asks GitHub which release is the latest and opens the download
+  page; nothing is downloaded or installed automatically. A daily check is
+  available in Settings and is off by default.
+- Make the main window easier to use with VoiceOver: metric cards and sidebar
+  rows read as one item with their count, decorative icons are skipped, and the
+  category switches and progress bars have names.
+- Publish only the notes for the version being released instead of the whole
+  changelog.
+
 ## 1.8.0 — 2026-08-20
 
 - Lower the requirement to macOS 14 Sonoma. Foundation Models is weak-linked

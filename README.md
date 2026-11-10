@@ -118,6 +118,17 @@ GitHub release packages are ad-hoc signed and include SHA-256 checksums. They
 are not notarized because this independent open-source project does not
 currently have an Apple Developer membership.
 
+## Install with Homebrew
+
+```bash
+brew tap m-nabeegh/tap
+brew install --cask filemorrow
+```
+
+Newer Homebrew versions ask you to run `brew trust m-nabeegh/tap` first. The
+cask installs the same DMG as below and pins its SHA-256. macOS still asks
+once before the first launch, as described in the next section.
+
 ## Install a GitHub release
 
 1. Download the DMG or ZIP and `SHA256SUMS.txt` from the same release.
@@ -274,8 +285,9 @@ flowchart LR
 
 There is no server in this path. FileMorrow has no account, analytics SDK,
 advertising, cloud API key, or file upload code. Extracted evidence is bounded
-and used locally. Network access is needed only when a user downloads the app or
-when macOS itself prepares Apple Intelligence.
+and used locally. Network access is needed only when a user downloads the app,
+when macOS itself prepares Apple Intelligence, or when a user asks FileMorrow to
+check for updates.
 
 ## First launch
 
@@ -322,7 +334,14 @@ many different subjects.
 ## Privacy
 
 File contents stay on the Mac. The project does not include telemetry,
-networking, advertising, or third-party analytics.
+advertising, or third-party analytics.
+
+The only network request FileMorrow can make is the update check. **Check for
+Updates** asks GitHub which release is the latest: one request to
+`api.github.com`, with no cookies, no identifier and nothing about your files.
+It runs when you choose it. A once-a-day check is available in Settings and is
+off by default. FileMorrow never downloads or installs an update itself; it
+opens the release page, where the checksums are.
 
 Duplicate detection is the one workflow that recursively reads accessible
 folders inside Downloads. It hashes bytes locally and never reorganizes nested
