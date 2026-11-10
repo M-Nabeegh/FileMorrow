@@ -46,6 +46,10 @@ struct FileMorrowApp: App {
                         )
                     ])
                 }
+                Button("Check for Updates…") {
+                    Task { await state.checkForUpdatesNow() }
+                }
+                .disabled(state.isCheckingForUpdates)
             }
 
             CommandGroup(after: .newItem) {
@@ -102,6 +106,11 @@ private struct FileMorrowMenu: View {
             Text("\(ByteCountFormatter.string(fromByteCount: state.totalReclaimableSize, countStyle: .file)) reclaimable from cleanup")
         }
         Text(state.automaticOrganization ? "Automatic organization: On" : "Automatic organization: Off")
+        if let update = state.availableUpdate {
+            Button("FileMorrow \(update.version) Is Available…") {
+                state.openAvailableUpdate()
+            }
+        }
 
         Divider()
 
@@ -142,6 +151,12 @@ private struct FileMorrowMenu: View {
             NSApplication.shared.activate()
             state.requestOnboarding()
         }
+
+        Button("Check for Updates…") {
+            NSApplication.shared.activate()
+            Task { await state.checkForUpdatesNow() }
+        }
+        .disabled(state.isCheckingForUpdates)
 
         SettingsLink {
             Text("Settings…")

@@ -63,6 +63,7 @@ struct OnboardingView: View {
                 .foregroundStyle(.white)
                 .frame(width: 82, height: 82)
                 .background(.indigo.gradient, in: RoundedRectangle(cornerRadius: 20))
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 5) {
                 Text("Welcome to FileMorrow")
@@ -147,6 +148,7 @@ private struct OnboardingSection<Content: View>: View {
                 .font(.title2)
                 .foregroundStyle(tint)
                 .frame(width: 30)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
                     .font(.headline)
