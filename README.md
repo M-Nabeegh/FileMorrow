@@ -118,6 +118,17 @@ GitHub release packages are ad-hoc signed and include SHA-256 checksums. They
 are not notarized because this independent open-source project does not
 currently have an Apple Developer membership.
 
+## Install with Homebrew
+
+```bash
+brew tap m-nabeegh/tap
+brew install --cask filemorrow
+```
+
+Newer Homebrew versions ask you to run `brew trust m-nabeegh/tap` first. The
+cask installs the same DMG as below and pins its SHA-256. macOS still asks
+once before the first launch, as described in the next section.
+
 ## Install a GitHub release
 
 1. Download the DMG or ZIP and `SHA256SUMS.txt` from the same release.
